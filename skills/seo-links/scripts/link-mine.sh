@@ -30,11 +30,39 @@ if [[ -n "${DATAFORSEO_LOGIN:-}" && -n "${DATAFORSEO_PASSWORD:-}" ]]; then
       \"filters\": [\"dofollow\",\"=\",true]
     }]")
   
+  # Check for API errors
+  STATUS_CODE=$(echo "$RESPONSE" | jq -r ".tasks[0].status_code // 0")
+  if [[ "$STATUS_CODE" != "20000" ]]; then
+    STATUS_MSG=$(echo "$RESPONSE" | jq -r ".tasks[0].status_message // "unknown"")
+    echo "DataForSEO Backlinks API error: $STATUS_MSG"
+    echo "Falling back to web search..."
+    echo ""
+    echo "Search these queries to find sites linking to $COMPETITOR:"
+    echo "  1. "${COMPETITOR}" resources"
+    echo "  2. "${COMPETITOR}" best tools"
+    echo "  3. "${COMPETITOR}" roundup"
+    echo "  4. "${COMPETITOR}" review"
+    exit 0
+  fi
   echo "$RESPONSE" | jq -r '
     .tasks[0].result[0].items[]? | 
     "DR: \(.domain_from_rank // "?") | \(.url_from) | Anchor: \(.anchor // "none") | Type: \(.type // "unknown")"
   ' 2>/dev/null || echo "Error parsing DataForSEO response"
   
+  # Check for API errors
+  STATUS_CODE=$(echo "$RESPONSE" | jq -r ".tasks[0].status_code // 0")
+  if [[ "$STATUS_CODE" != "20000" ]]; then
+    STATUS_MSG=$(echo "$RESPONSE" | jq -r ".tasks[0].status_message // "unknown"")
+    echo "DataForSEO Backlinks API error: $STATUS_MSG"
+    echo "Falling back to web search..."
+    echo ""
+    echo "Search these queries to find sites linking to $COMPETITOR:"
+    echo "  1. "${COMPETITOR}" resources"
+    echo "  2. "${COMPETITOR}" best tools"
+    echo "  3. "${COMPETITOR}" roundup"
+    echo "  4. "${COMPETITOR}" review"
+    exit 0
+  fi
   TOTAL=$(echo "$RESPONSE" | jq -r '.tasks[0].result[0].total_count // 0')
   echo ""
   echo "Total backlinks found: $TOTAL (showing top $LIMIT)"

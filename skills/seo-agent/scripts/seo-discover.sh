@@ -239,6 +239,13 @@ SCORED=$(echo "$VOLUME_DATA" | jq --argjson existing "$EXISTING_POSITIONS" \
   --argjson strike_min "$STRIKE_MIN" \
   --argjson strike_max "$STRIKE_MAX" '
   map(
+    # Normalize competition (DataForSEO returns strings like "LOW","MEDIUM","HIGH")
+    .competition as $raw_comp |
+    (if ($raw_comp | type) == "string" then
+      (if $raw_comp == "LOW" then 0.2 elif $raw_comp == "MEDIUM" then 0.5 elif $raw_comp == "HIGH" then 0.8 else 0.5 end)
+    elif ($raw_comp | type) == "number" then $raw_comp
+    else 0.5 end) as $norm_comp |
+    . + {competition: $norm_comp} |
     select(.search_volume >= $min_vol) |
     . + {
       current_position: ($existing[.keyword] // null),
@@ -270,7 +277,7 @@ STRIKE_WITH_SCORES=$(echo "$STRIKE_ZONE" | jq --argjson vol "$VOLUME_DATA" '
       competition: ($v.competition // "n/a"),
       opportunity_score: (
         if $v then
-          (($v.search_volume // 0) / 100) * (1 - ($v.competition // 0.5)) * 2.0 |
+          (($v.search_volume // 0) / 100) * (1 - (if (($v.competition // 0.5) | type) == "string" then 0.5 elif ($v.competition // 0.5) | type == "number" then ($v.competition // 0.5) else 0.5 end)) * 2.0 |
           . * 10 | round | . / 10
         else
           ($gsc.impressions / 10) | round
