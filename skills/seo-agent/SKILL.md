@@ -5,7 +5,7 @@ metadata:
   openclaw:
     emoji: "🔄"
     user-invocable: true
-    homepage: https://thevibemarketer.com
+    homepage: https://bigplayers.co
     requires:
       env:
         - DATAFORSEO_LOGIN

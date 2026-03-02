@@ -76,8 +76,8 @@ cp -r seo-forge ~/clawd/skills/
 Make scripts executable:
 
 ```bash
-chmod +x ~/clawd/skills/seo-agent/scripts/*.sh
-chmod +x ~/clawd/skills/seo-forge/scripts/*.sh
+chmod +x ~/clawd/skills/seo-*/scripts/*.sh
+
 ```
 
 ---

@@ -1,6 +1,6 @@
 # SEO Kit for OpenClaw
 
-An AI agent that finds keywords, writes content, monitors rankings, and self-improves. Two skills that chain into a compounding loop.
+An AI agent that finds keywords, writes content, builds backlinks, monitors rankings, and self-improves. Four skills that chain into a compounding loop.
 
 **Built by [Matt Berman](https://x.com/TheMattBerman) / [Big Players](https://bigplayers.co)**
 
@@ -14,46 +14,64 @@ This agent does:
 
 1. **Discovers** keyword opportunities from your actual Google Search Console data
 2. **Writes** psychology-driven content in your brand voice (not generic AI slop)
-3. **Monitors** rankings weekly and flags what's climbing or dropping
-4. **Competes** by finding keywords your competitors rank for that you don't
-5. **Repeats** automatically, getting smarter about your brand every week
+3. **Builds links** through competitor mining, unlinked mentions, and broken link outreach
+4. **Monitors** rankings weekly and flags what's climbing or dropping
+5. **Checks health** with PageSpeed audits, crawl checks, and image optimization
+6. **Repeats** automatically, getting smarter about your brand every week
 
 The loop is the point. Each cycle feeds the next one.
 
 ---
 
-## The Two Skills
+## The Four Skills
 
-### seo-agent (Discovery + Monitoring)
+### skills/seo-agent — Discovery + Monitoring
 
 The brain that finds opportunities and tracks progress.
 
 | Script | What It Does |
 |--------|-------------|
-| `seo-discover.sh` | Pulls GSC data, cross-references with DataForSEO, finds strike zone keywords (positions 5-20) |
-| `seo-monitor.sh` | Weekly ranking snapshots, flags climbers/droppers, identifies push opportunities |
+| `seo-discover.sh` | Finds strike zone keywords (positions 5-20) from GSC + DataForSEO |
+| `seo-monitor.sh` | Weekly ranking snapshots, flags climbers and droppers |
 | `seo-compete.sh` | Competitor gap analysis: keywords they rank for that you don't |
 
-**Data sources:**
-- Google Search Console (your real ranking data)
-- DataForSEO API (keyword research, search volumes, SERP analysis)
-
-### seo-forge (Content Engine)
+### skills/seo-forge — Content Engine
 
 The writer that sounds like you, not like ChatGPT.
 
 | Script | What It Does |
 |--------|-------------|
-| `seo-interview.sh` | 8 questions that build your brand voice, audience, and positioning files |
+| `seo-interview.sh` | 8 questions that build your brand voice and positioning |
 | `seo-research.sh` | SERP analysis, People Also Ask, search intent classification |
-| `seo-check.sh` | Validates your GSC and DataForSEO connections are working |
+| `seo-check.sh` | Validates your GSC and DataForSEO connections |
 
-**What makes it different:**
-- **Interview mode**: Learns your brand voice from 8 questions. Content sounds like you wrote it.
-- **Weekly refinement**: Asks quick check-in questions to stay current with your business.
-- **Psychology frameworks**: Every article targets a core drive and uses proven persuasion structures.
-- **Anti-AI-Overview strategy**: Includes personal experience markers that Google's AI can't replicate.
-- **"Only I Can Write This" test**: Flags generic content and prompts you to add real experience.
+**What makes it different:** Interview mode learns your voice. Weekly refinement keeps it current. Psychology frameworks make content convert, not just rank. Anti-AI-Overview strategy bakes in real experience markers.
+
+### skills/seo-links — Backlink Acquisition
+
+Content without links is a prayer. This skill finds link opportunities.
+
+| Script | What It Does |
+|--------|-------------|
+| `link-mine.sh` | Mines competitor backlink profiles for targets |
+| `link-mentions.sh` | Finds unlinked brand mentions (easiest links to get) |
+| `link-broken.sh` | Finds broken links on resource pages, pitches your content |
+| `link-internal.sh` | Audits internal linking, finds orphan pages |
+| `link-prospect.sh` | Finds "best tools" and resource pages to get listed on |
+
+### skills/seo-health — Technical SEO Monitoring
+
+Rankings depend on a solid technical foundation.
+
+| Script | What It Does |
+|--------|-------------|
+| `health-speed.sh` | PageSpeed + Core Web Vitals (LCP, INP, CLS) |
+| `health-crawl.sh` | Broken links, missing meta tags, redirect chains, mixed content |
+| `health-images.sh` | Oversized images, missing alt text, wrong formats |
+
+### skills/seo-checklist — Reference
+
+Technical SEO reference covering meta tags, schema markup (Article, FAQ, HowTo), llms.txt, topical authority (hub-and-spoke), and Core Web Vitals thresholds.
 
 ---
 
@@ -63,79 +81,58 @@ The writer that sounds like you, not like ChatGPT.
 
 - [OpenClaw](https://github.com/openclaw/openclaw) installed and running
 - Google Search Console access for your site
-- (Optional) [DataForSEO](https://dataforseo.com) API account ($50/month, way less than Ahrefs)
+- (Optional) [DataForSEO](https://dataforseo.com) API account (~$50/month)
 
-### 1. Clone this repo
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/TheMattBerman/seo-kit.git
+cp -r seo-kit/skills/* ~/clawd/skills/
 ```
 
-### 2. Copy skills to your OpenClaw workspace
+### 2. Set up auth
+
+See [SETUP.md](./SETUP.md) for Google Search Console OAuth and DataForSEO credentials.
+
+### 3. Run the health check
 
 ```bash
-cp -r seo-kit/seo-agent ~/clawd/skills/
-cp -r seo-kit/seo-forge ~/clawd/skills/
+bash skills/seo-agent/scripts/seo-check.sh
+bash skills/seo-health/scripts/health-speed.sh https://yoursite.com --both
 ```
 
-### 3. Set up Google Search Console auth
+### 4. Let the agent interview you
 
-Follow the GSC setup in [SETUP.md](./SETUP.md) to get your OAuth token.
-
-### 4. (Optional) Add DataForSEO credentials
-
-```bash
-echo 'export DATAFORSEO_LOGIN="your-email"' >> ~/.bashrc
-echo 'export DATAFORSEO_PASSWORD="your-api-key"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-No DataForSEO? The agent falls back to web search for keyword research. Less data, still works.
-
-### 5. Run the health check
-
-```bash
-bash seo-agent/scripts/seo-check.sh
-```
-
-### 6. Let the agent interview you
-
-Tell your OpenClaw agent: "Run the SEO Forge brand interview"
+Tell your OpenClaw agent: *"Run the SEO Forge brand interview"*
 
 8 questions. 5 minutes. Every article after this sounds like you.
 
-### 7. Discover your first opportunities
+### 5. Set it on a schedule
 
-Tell your agent: "Run SEO discover on my site"
-
-### 8. Set it on a schedule
-
-Add a weekly cron in OpenClaw:
-- Monday: `seo-discover` + `seo-monitor`
-- Tuesday-Thursday: Write content targeting top opportunities
-- Friday: `seo-compete` on one competitor
-
-Then forget about it. Check back in a month.
+```
+Monday:    seo-discover + seo-monitor + health checks
+Tuesday:   Write content targeting top opportunities
+Wednesday: link-internal (add cross-links to new content)
+Thursday:  link-mine + link-mentions (find backlink targets)
+Friday:    seo-compete on one competitor + link-prospect
+```
 
 ---
 
-## The Self-Improving Loop
+## The Complete Loop
 
 ```
-Week 1: Discover 20 keyword opportunities
-         Write 3 articles targeting the best ones
+Week 1: Discover keywords → Write 3 articles → Add internal links
+         Run health check → Fix any technical issues
 
-Week 2: Monitor rankings
-         2 articles indexed, 1 in strike zone
-         Write supporting content for the climber
+Week 2: Monitor rankings → Write supporting content for climbers
+         Mine competitor backlinks → Send outreach
 
-Week 3: Check GSC again
-         Article moved from position 15 to 9
-         Run competitor gap, find 8 new opportunities
+Week 3: Competitor gap analysis → Find 8 new keywords
+         Find unlinked mentions → Easy outreach wins
 
-Week 4: Write 3 more from gap analysis
-         First article hits position 6
-         Organic traffic up 34%
+Week 4: Articles hitting page 1 → Organic traffic up
+         Agent is already 3 weeks ahead of you
 
 Repeat forever.
 ```
@@ -148,10 +145,11 @@ Repeat forever.
 |---------|------|
 | OpenClaw | Free (open source) |
 | Google Search Console | Free |
+| PageSpeed Insights API | Free |
 | DataForSEO | ~$50/month (optional) |
 | **Total** | **$0-50/month** |
 
-Compare that to Ahrefs ($200+/month) or hiring an SEO person ($5,000+/month).
+Compare: Ahrefs ($200+/mo) + Surfer ($89/mo) + Jasper ($80/mo) + SEO freelancer ($2-5K/mo)
 
 ---
 
@@ -159,28 +157,47 @@ Compare that to Ahrefs ($200+/month) or hiring an SEO person ($5,000+/month).
 
 ```
 seo-kit/
-  seo-agent/
-    SKILL.md          # Full skill instructions for OpenClaw
-    scripts/
-      seo-discover.sh # Keyword discovery + strike zone finder
-      seo-monitor.sh  # Weekly ranking tracker
-      seo-compete.sh  # Competitor gap analysis
-  seo-forge/
-    SKILL.md          # Content engine instructions
-    scripts/
-      seo-interview.sh # Brand voice interview (8 questions)
-      seo-research.sh  # SERP analysis + content research
-      seo-check.sh     # Connection health check
-  SETUP.md            # Detailed setup guide
-  README.md           # This file
+  skills/
+    seo-agent/           # Discovery + monitoring
+      SKILL.md
+      scripts/
+        seo-discover.sh
+        seo-monitor.sh
+        seo-compete.sh
+    seo-forge/           # Content engine
+      SKILL.md
+      scripts/
+        seo-interview.sh
+        seo-research.sh
+        seo-check.sh
+    seo-links/           # Backlink acquisition
+      SKILL.md
+      scripts/
+        link-mine.sh
+        link-mentions.sh
+        link-broken.sh
+        link-internal.sh
+        link-prospect.sh
+    seo-health/          # Technical monitoring
+      SKILL.md
+      scripts/
+        health-speed.sh
+        health-crawl.sh
+        health-images.sh
+    seo-checklist/       # Reference docs
+      CHECKLIST.md
+  SOUL.md
+  AGENTS.md
+  SETUP.md
+  README.md
 ```
 
 ---
 
 ## More OpenClaw Kits
 
-- [meta-ads-kit](https://github.com/TheMattBerman/meta-ads-kit) - AI agent that runs your Meta ads
-- [first-1000-kit](https://github.com/TheMattBerman/first-1000-kit) - AI agent that finds your first 1000 customers
+- [meta-ads-kit](https://github.com/TheMattBerman/meta-ads-kit) — AI agent that runs your Meta ads
+- [first-1000-kit](https://github.com/TheMattBerman/first-1000-kit) — AI agent that finds your first 1000 customers
 
 ---
 
