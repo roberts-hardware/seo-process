@@ -59,6 +59,38 @@ Content without links is a prayer. This skill finds link opportunities.
 | `link-internal.sh` | Audits internal linking, finds orphan pages |
 | `link-prospect.sh` | Finds "best tools" and resource pages to get listed on |
 
+### skills/seo-images — AI Image Generation
+
+Publication-quality images for your SEO content. No stock photos.
+
+| Style | What It Produces |
+|-------|-----------------|
+| `founder_editorial` | Cinematic portraits — Leica M11, A24 aesthetic, magazine quality |
+| `dark_data` | Dashboard stat cards — Bloomberg meets Stripe, bold metrics |
+| `product_lifestyle` | Editorial product photography — Phase One quality |
+| `social_card` | Typography-forward share cards — scroll-stopping at thumbnail |
+| `warm_lifestyle` | Bright aspirational lifestyle — Portra 400 film stock |
+| `cinematic_scene` | Movie-still narratives — ARRI Alexa, director references |
+
+**21 presets** across 6 styles. **6 vertical routing maps** (SaaS, DTC, newsletter, agency, AI/tech, finance) that auto-select the right style for your content.
+
+Integrates with SEO Forge — after writing an article, it offers to generate hero images, inline visuals, and social share cards matched to your content's vertical.
+
+```bash
+# Quick generate
+bash skills/seo-images/scripts/generate.sh --style dark_data --preset revenue_card \
+  --headline '"$200M/Year"' --ratio 16:9 --output hero.png
+
+# Dry run (no API needed)
+bash skills/seo-images/scripts/generate.sh --style cinematic_scene --preset late_night_office \
+  --context "Founder building AI agents" --ratio 21:9 --dry-run
+
+# List all styles and presets
+bash skills/seo-images/scripts/generate.sh --list-styles
+```
+
+Requires: `REPLICATE_API_TOKEN` (or `GOOGLE_AI_API_KEY` for Google AI Studio). See skill SKILL.md for setup.
+
 ### skills/seo-health — Technical SEO Monitoring
 
 Rankings depend on a solid technical foundation.
@@ -186,12 +218,24 @@ Without a key: rate-limited (a few requests per minute). With a free API key: 25
 
 Get one at [Google Cloud Console](https://console.cloud.google.com/apis/credentials) and enable the PageSpeed Insights API. Set `PAGESPEED_API_KEY` in your environment.
 
+### Replicate API (image generation, optional)
+
+Required for: `seo-images`
+
+Nano Banana 2 (Google Gemini 3.1 Flash Image) runs on Replicate. ~$0.02-0.05 per image at 1K, ~$0.08-0.12 at 2K.
+
+Sign up at [replicate.com](https://replicate.com). Set `REPLICATE_API_TOKEN` in your environment.
+
+**Alternative:** Use Google AI Studio (`GOOGLE_AI_API_KEY`) for free-tier access, or fal.ai (`FAL_KEY`). The skill generates structured prompts — pipe them to any provider.
+
 ### What You Actually Need
 
 | Level | APIs | Monthly Cost | What Works |
 |-------|------|-------------|------------|
 | **Starter** | GSC only | $0 | Discovery (GSC mode), monitoring, health checks, internal links |
+| **Starter + Images** | GSC + Replicate | ~$5 | Above + AI-generated article images |
 | **Full** | GSC + DataForSEO | ~$50 | Everything: volumes, expansion, competitor gaps, SERP-based link prospecting |
+| **Full + Images** | GSC + DataForSEO + Replicate | ~$55 | Everything + publication-quality images |
 | **Full + Backlinks** | GSC + DataForSEO + Backlinks addon | ~$100 | Everything + competitor backlink mining |
 
 Start at $0. Add DataForSEO when you want search volumes and competitor analysis.
@@ -236,6 +280,19 @@ seo-kit/
         link-broken.sh
         link-internal.sh
         link-prospect.sh
+    seo-images/          # AI image generation
+      SKILL.md
+      scripts/
+        generate.sh
+      styles/
+        founder_editorial.json
+        dark_data.json
+        product_lifestyle.json
+        social_card.json
+        warm_lifestyle.json
+        cinematic_scene.json
+        verticals.json
+      references/          # Gold-standard reference images (add your own)
     seo-health/          # Technical monitoring
       SKILL.md
       scripts/

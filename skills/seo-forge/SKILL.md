@@ -580,6 +580,8 @@ When executing this skill as an agent, follow these rules exactly:
 
 11. **Offer content-atomizer chain.** After saving, always offer to atomize the article into social posts.
 
+13. **Offer image generation.** After the draft is complete, ask: *"Want me to generate images for this? I can create a hero image, inline section images, and a social share card."* Use the `seo-images` skill with vertical routing from `styles/verticals.json`. Match the article's vertical (SaaS, DTC, newsletter, AI/tech, agency, finance) to the right style+preset combos. If the user says yes, generate 2-4 images: hero (16:9), 1-2 inline images, and a social card (16:9 for OG). Save to the same output directory as the article.
+
 12. **Show brand context working.** When voice-profile.md is loaded, mention specifically how it shaped the writing. When positioning.md is loaded, name the angle used.
 
 ---
@@ -613,3 +615,55 @@ After saving:
 - **Minor edits** → ask what changed, log the insight.
 - **Major rewrite** → ask what missed. Suggest updating voice-profile.md or running `/positioning-angles` for a sharper angle.
 - **Haven't used yet** → note it. Check next session.
+
+---
+
+## Image Generation (via seo-images skill)
+
+After writing the article, SEO Forge offers to generate matching images. This uses the `seo-images` skill which provides 6 visual styles and vertical-specific routing.
+
+### How It Works
+
+1. **Detect the vertical** from the article topic (SaaS, DTC, newsletter, AI/tech, agency, finance)
+2. **Load vertical presets** from `seo-images/styles/verticals.json`
+3. **Ask the user** what they want:
+   - 🖼️ **Hero image** (16:9) — the main article header
+   - 📊 **Stat card** — key metric from the article as a dark_data card
+   - 👤 **Editorial portrait** — if the article features a person/founder
+   - 📱 **Social share card** (16:9) — OG image optimized for X/LinkedIn thumbnails
+   - 🎬 **Cinematic scene** — narrative moment for dramatic editorial pieces
+   - 📸 **Product shot** — for DTC/e-commerce article subjects
+4. **Build structured prompts** using the full JSON schema from the matching style
+5. **Generate via Replicate** (or user's preferred provider)
+6. **Save to article directory** with descriptive names
+
+### Prompt Building
+
+The agent reads the article and extracts:
+- **Key metric** → headline for dark_data cards (e.g. "$200M/Year")
+- **Subject description** → for founder_editorial portraits
+- **Product details** → for product_lifestyle shots
+- **Article title** → for social_card headline text
+- **Brand colors** → from voice-profile.md if available, otherwise from vertical defaults
+- **Mood/tone** → maps article energy to lighting and color grade
+
+Then builds the full structured JSON prompt per the style's schema — camera model, lens, aperture, lighting rig, color grade, negative prompts — and flattens it for the API call.
+
+### Quick Reference
+
+```
+Article vertical    → Hero style          → Social card style
+─────────────────────────────────────────────────────────────
+SaaS/Software       → dark_data           → social_card (neon)
+DTC/E-commerce      → product_lifestyle   → social_card (warm)
+Newsletter/Creator  → founder_editorial   → social_card (dark bold)
+Agency/Marketing    → cinematic_scene     → social_card (gradient)
+AI/Automation       → cinematic_scene     → social_card (neon)
+Finance/Revenue     → dark_data           → social_card (dark bold)
+```
+
+### Requirements
+
+- `REPLICATE_API_TOKEN` environment variable (or `GOOGLE_AI_API_KEY` for Google AI Studio)
+- The `seo-images` skill must be available in the skills directory
+- Optional: reference images in `seo-images/references/` for style consistency
