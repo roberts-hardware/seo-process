@@ -2,8 +2,6 @@
 
 An AI agent that finds keywords, writes content, builds backlinks, monitors rankings, and self-improves. Four skills that chain into a compounding loop.
 
-**Built by [Matt Berman](https://x.com/TheMattBerman) / [Big Players](https://bigplayers.co)**
-
 ---
 
 ## What This Does
