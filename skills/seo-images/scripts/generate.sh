@@ -285,7 +285,7 @@ mkdir -p "$(dirname "$OUTPUT")"
 echo "Generating via Replicate (google/nano-banana-2)..."
 
 for i in $(seq 1 "$VARIATIONS"); do
-  RESPONSE=$(curl -s -X POST "https://api.replicate.com/v1/models/google/nano-banana-2/predictions" \
+  REQ=$(curl -sS -w "\n__HTTP__%{http_code}" -X POST "https://api.replicate.com/v1/models/google/nano-banana-2/predictions" \
     -H "Authorization: Bearer $REPLICATE_API_TOKEN" \
     -H "Content-Type: application/json" \
     -H "Prefer: wait" \
@@ -309,13 +309,27 @@ for i in $(seq 1 "$VARIATIONS"); do
         }
       }')")
 
-  STATUS=$(echo "$RESPONSE" | jq -r '.status // "unknown"')
-  PRED_ID=$(echo "$RESPONSE" | jq -r '.id // "unknown"')
+  HTTP_CODE=$(echo "$REQ" | sed -n 's/^__HTTP__//p')
+  RESPONSE=$(echo "$REQ" | sed '/^__HTTP__/d')
+
+  STATUS=$(echo "$RESPONSE" | jq -r '.status // "unknown"' 2>/dev/null || echo "unknown")
+  PRED_ID=$(echo "$RESPONSE" | jq -r '.id // "unknown"' 2>/dev/null || echo "unknown")
+
+  # Handle API-level errors gracefully and continue batch
+  if [[ "$HTTP_CODE" -ge 400 ]]; then
+    RETRY_AFTER=$(echo "$RESPONSE" | jq -r '.retry_after // empty' 2>/dev/null || true)
+    DETAIL=$(echo "$RESPONSE" | jq -r '.detail // .title // .error // "unknown error"' 2>/dev/null || echo "$RESPONSE")
+    echo "❌ API Error ($HTTP_CODE): $DETAIL"
+    if [[ "$HTTP_CODE" == "429" && -n "$RETRY_AFTER" ]]; then
+      echo "   Waiting ${RETRY_AFTER}s due to rate limit..."
+      sleep "$RETRY_AFTER"
+    fi
+    continue
+  fi
 
   if [[ "$STATUS" == "succeeded" ]]; then
-    IMAGE_URL=$(echo "$RESPONSE" | jq -r '.output[0] // .output // empty')
+    IMAGE_URL=$(echo "$RESPONSE" | jq -r 'if (.output|type)=="array" then .output[0] elif (.output|type)=="string" then .output else empty end')
     if [[ -n "$IMAGE_URL" ]]; then
-      # Determine output filename for variations
       if [[ "$VARIATIONS" -gt 1 ]]; then
         EXT="${OUTPUT##*.}"
         BASE="${OUTPUT%.*}"
@@ -323,22 +337,26 @@ for i in $(seq 1 "$VARIATIONS"); do
       else
         OUT_FILE="$OUTPUT"
       fi
-      curl -s -o "$OUT_FILE" "$IMAGE_URL"
+      curl -sS -o "$OUT_FILE" "$IMAGE_URL"
       echo "✅ Saved: $OUT_FILE"
     else
       echo "⚠️  No image URL in response"
-      echo "$RESPONSE" | jq .
+      echo "$RESPONSE" | jq . 2>/dev/null || echo "$RESPONSE"
     fi
   elif [[ "$STATUS" == "processing" || "$STATUS" == "starting" ]]; then
     echo "⏳ Prediction $PRED_ID still processing. Polling..."
     for attempt in $(seq 1 30); do
       sleep 3
-      POLL=$(curl -s -H "Authorization: Bearer $REPLICATE_API_TOKEN" \
+      POLL=$(curl -sS -H "Authorization: Bearer $REPLICATE_API_TOKEN" \
         "https://api.replicate.com/v1/predictions/$PRED_ID")
-      POLL_STATUS=$(echo "$POLL" | jq -r '.status')
+      POLL_STATUS=$(echo "$POLL" | jq -r '.status // "unknown"')
 
       if [[ "$POLL_STATUS" == "succeeded" ]]; then
-        IMAGE_URL=$(echo "$POLL" | jq -r '.output[0] // .output // empty')
+        IMAGE_URL=$(echo "$POLL" | jq -r 'if (.output|type)=="array" then .output[0] elif (.output|type)=="string" then .output else empty end')
+        if [[ -z "$IMAGE_URL" ]]; then
+          echo "⚠️  Poll succeeded but no output URL for $PRED_ID"
+          break
+        fi
         if [[ "$VARIATIONS" -gt 1 ]]; then
           EXT="${OUTPUT##*.}"
           BASE="${OUTPUT%.*}"
@@ -346,7 +364,7 @@ for i in $(seq 1 "$VARIATIONS"); do
         else
           OUT_FILE="$OUTPUT"
         fi
-        curl -s -o "$OUT_FILE" "$IMAGE_URL"
+        curl -sS -o "$OUT_FILE" "$IMAGE_URL"
         echo "✅ Saved: $OUT_FILE"
         break
       elif [[ "$POLL_STATUS" == "failed" || "$POLL_STATUS" == "canceled" ]]; then
@@ -361,7 +379,7 @@ for i in $(seq 1 "$VARIATIONS"); do
     fi
   else
     echo "❌ Error: $STATUS"
-    echo "$RESPONSE" | jq -r '.error // .' 2>/dev/null || echo "$RESPONSE"
+    echo "$RESPONSE" | jq -r '.error // .detail // .' 2>/dev/null || echo "$RESPONSE"
   fi
 done
 

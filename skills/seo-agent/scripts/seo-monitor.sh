@@ -11,9 +11,15 @@
 
 set -euo pipefail
 
-GSC_AUTH_SCRIPT="$HOME/clawd/skills/gsc-report/scripts/get-token.sh"
-SNAPSHOT_DIR="$HOME/clawd/workspace/seo-agent/snapshots"
-CONFIG_FILE="$HOME/clawd/workspace/seo-agent/config.yaml"
+GSC_AUTH_SCRIPT="$HOME/.openclaw/workspace/skills/seo-agent/scripts/get-token.sh"
+SNAPSHOT_DIR="$HOME/.openclaw/workspace/seo-agent/snapshots"
+CONFIG_FILE="$HOME/.openclaw/workspace/seo-agent/config.yaml"
+
+ENV_FILE="$HOME/.openclaw/workspace/skills/seo-agent/.env"
+if [[ -f "$ENV_FILE" ]]; then
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+fi
 
 SITE=""
 DAYS=28
@@ -75,10 +81,15 @@ START_DATE=$(date -d "-${DAYS} days" +%Y-%m-%d 2>/dev/null || date -v-${DAYS}d +
 ENCODED_SITE=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$SITE', safe=''))" 2>/dev/null || \
   echo "$SITE" | sed 's|:|%3A|g' | sed 's|/|%2F|g')
 
+QUOTA_PROJECT="${GSC_QUOTA_PROJECT:-${GOOGLE_CLOUD_QUOTA_PROJECT:-}}"
+GSC_HEADERS=(-H "Authorization: Bearer $ACCESS_TOKEN" -H "Content-Type: application/json")
+if [[ -n "$QUOTA_PROJECT" ]]; then
+  GSC_HEADERS+=( -H "X-Goog-User-Project: $QUOTA_PROJECT" )
+fi
+
 GSC_RESPONSE=$(curl -s -X POST \
   "https://searchconsole.googleapis.com/webmasters/v3/sites/${ENCODED_SITE}/searchAnalytics/query" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
+  "${GSC_HEADERS[@]}" \
   -d "{
     \"startDate\": \"$START_DATE\",
     \"endDate\": \"$END_DATE\",
