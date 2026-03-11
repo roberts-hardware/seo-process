@@ -42,15 +42,42 @@ fi
 
 echo ""
 
-# Get access token
+# Get access token using Python generator (includes proper scopes)
 echo "🔑 Getting access token..."
-if TOKEN=$(gcloud auth application-default print-access-token 2>&1); then
-  echo "✅ Access token obtained: ${TOKEN:0:20}..."
+
+TOKEN=""
+
+# Try Python generator first (has proper scopes)
+if [[ -n "${GOOGLE_APPLICATION_CREDENTIALS:-}" ]] && [[ -f "$GOOGLE_APPLICATION_CREDENTIALS" ]]; then
+  TOKEN_GENERATOR="$REPO_ROOT/bin/generate-gsc-token.py"
+
+  if [[ -f "$TOKEN_GENERATOR" ]]; then
+    if TOKEN=$(python3 "$TOKEN_GENERATOR" "$GOOGLE_APPLICATION_CREDENTIALS" 2>&1); then
+      echo "✅ Access token obtained: ${TOKEN:0:20}..."
+    else
+      echo "❌ Error: Could not generate token from service account"
+      echo ""
+      echo "Python error: $TOKEN"
+      echo ""
+      echo "Install dependencies: ./bin/install-dependencies.sh"
+      exit 1
+    fi
+  else
+    echo "❌ Error: Token generator not found: $TOKEN_GENERATOR"
+    exit 1
+  fi
 else
-  echo "❌ Error: Could not get access token"
-  echo ""
-  echo "Try running: ./bin/setup-google-auth.sh"
-  exit 1
+  # Fallback to gcloud (may not have proper scopes)
+  echo "⚠️  GOOGLE_APPLICATION_CREDENTIALS not set, trying gcloud..."
+  if TOKEN=$(gcloud auth application-default print-access-token 2>&1); then
+    echo "✅ Access token obtained: ${TOKEN:0:20}..."
+    echo "⚠️  Warning: This may not have Search Console scopes"
+  else
+    echo "❌ Error: Could not get access token"
+    echo ""
+    echo "Try running: ./bin/setup-google-auth.sh"
+    exit 1
+  fi
 fi
 
 echo ""
