@@ -1,0 +1,24 @@
+[
+  {
+    "id": "ckalcevicroofing",
+    "name": "ckalcevicroofing",
+    "site_url": "https://ckalcevicroofing.com",
+    "business_type": "roofing",
+    "phone": "(724) 494-5614",
+    "last_snapshot": "2026-03-10",
+    "content_pages": 6,
+    "workspace_path": "workspace/ckalcevicroofing"
+  }
+,
+  {
+    "id": "test-client",
+    "name": "test client",
+    "site_url": "https://example.com",
+    "business_type": "unknown",
+    "phone": "",
+    "last_snapshot": "",
+    "content_pages": 0,
+    "workspace_path": "workspace/test-client"
+  }
+
+]

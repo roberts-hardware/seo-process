@@ -1,0 +1,98 @@
+# SEO Process Client Configuration Template
+# Copy this to: workspace/{client-id}/seo/config.yaml
+
+# Client identifier (use lowercase, dashes for spaces)
+client_id: ckalcevicroofing
+
+# Google Search Console property URL
+# Format: sc-domain:example.com  OR  https://example.com/
+site: "sc-domain:ckalcevicroofing.com"
+
+# Actual website URL (used for health checks)
+site_url: "https://ckalcevicroofing.com"
+
+# Business type
+business_type: "roofing"
+
+# Client contact information
+phone: "(724) 494-5614"
+years_in_business: 25
+
+# Licenses and certifications
+licenses:
+  - "PA Contractor License"
+certifications:
+  - "GAF Master Elite Contractor"
+
+# Service area: Cranberry, Wexford, Mars, Warrendale, Gibsonia, Seven Fields, Evans City
+# Extended: Butler County, Beaver County, parts of Allegheny County
+# Note: 2 GBP locations (tracked separately in local rank tracker)
+
+# Service areas (used for content generation)
+service_areas:
+  primary:
+    - name: "Cranberry Township"
+      zip: "16066"
+      response_time: "30-45 min"
+    - name: "Wexford"
+      zip: "15090"
+      response_time: "30-45 min"
+    - name: "Beaver Falls"
+      zip: "15010"
+      response_time: "45-60 min"
+  secondary:
+    - "Mars"
+    - "Seven Fields"
+    - "Evans City"
+    - "Warrendale"
+    - "Gibsonia"
+    - "Butler County"
+
+# Services offered
+services:
+  - "commercial_roofing"
+  - "residential_roofing"
+  - "emergency_roof_repair"
+  - "metal_roofing"
+  - "roof_repair"
+  - "roof_replacement"
+
+# Competitor domains to monitor (for gap analysis)
+competitors:
+  - mcclellandsroofing.com
+  - buccosroofing.com
+  - mhiroof.com
+
+# Strike zone: Target ranking positions to prioritize
+# Default [5, 20] means positions 5-20 (page 1-2)
+target_positions: [5, 20]
+
+# Minimum monthly search volume to consider
+# Lower for local SEO since search volumes are smaller
+# Butler County market is smaller than Pittsburgh - can go as low as 20-30 if needed
+min_search_volume: 30
+
+# DataForSEO location code
+# IMPORTANT: Using Cranberry Township for Butler County service area
+# Primary service area: Cranberry, Wexford, Mars, Warrendale, Gibsonia, Seven Fields, Evans City
+# 1021866 = Cranberry Township, PA (represents Butler County service area)
+# 1023229 = Pittsburgh, PA (too far south - not primary service area)
+# 2840 = United States (too broad for local business)
+# See: https://docs.dataforseo.com/v3/serp/google/locations/
+location_code: 1021866
+
+# Language code
+# "en" = English
+language: "en"
+
+# Geographic info (for content templates)
+state: "PA"
+county: "Butler County"
+
+# Optional: Schedule reference (not enforced by scripts)
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"
+  links: "Tuesday-Friday (various)"

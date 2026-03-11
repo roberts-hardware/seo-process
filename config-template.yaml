@@ -1,0 +1,90 @@
+# SEO Process Client Configuration Template
+# Copy this to: workspace/{client-id}/seo/config.yaml
+
+# Client identifier (use lowercase, dashes for spaces)
+client_id: client-name
+
+# Google Search Console property URL
+# Format: sc-domain:example.com  OR  https://example.com/
+site: "sc-domain:example.com"
+
+# Actual website URL (used for health checks)
+site_url: "https://example.com"
+
+# Business type (determines content templates)
+# Options: roofing, plumbing, hvac, electrical, landscaping, general_contractor
+business_type: "roofing"
+
+# Client contact information
+phone: "(000) 000-0000"  # Update with real phone
+years_in_business: 25     # Update with actual years
+
+# Licenses and certifications
+licenses:
+  - "License #123456"     # Add real licenses
+certifications:
+  - "Certification Name"  # Add certifications (e.g., GAF Master Elite)
+
+# Service areas (used for content generation)
+service_areas:
+  primary:
+    - name: "Primary City 1"
+      zip: "00000"
+      response_time: "30-60 min"
+    - name: "Primary City 2"
+      zip: "00000"
+      response_time: "45-75 min"
+  secondary:
+    - "Secondary City 1"
+    - "Secondary City 2"
+
+# Services offered (used for content generation)
+# Use snake_case for service IDs
+# Examples for roofing: commercial_roofing, residential_roofing, emergency_repair, metal_roofing
+# Examples for plumbing: commercial_plumbing, residential_plumbing, drain_cleaning, water_heater
+services:
+  - "service_1"  # Replace with actual service
+  - "service_2"
+  - "service_3"
+
+# Competitor domains to monitor (for gap analysis)
+competitors:
+  - competitor1.com
+  - competitor2.com
+  - competitor3.com
+
+# Strike zone: Target ranking positions to prioritize
+# Default [5, 20] means positions 5-20 (page 1-2)
+target_positions: [5, 20]
+
+# Minimum monthly search volume to consider
+min_search_volume: 100
+
+# DataForSEO location code
+# IMPORTANT: For local SEO clients, use CITY codes (not country)
+# Examples:
+#   2840 = United States (national - use for nationwide brands)
+#   1023191 = New York, NY
+#   1023768 = Los Angeles, CA
+#   1024466 = Chicago, IL
+#   1025197 = Houston, TX
+#   1023516 = Phoenix, AZ
+#   1023805 = San Diego, CA
+# Find your city: https://docs.dataforseo.com/v3/serp/google/locations/
+location_code: 2840
+
+# Language code
+# "en" = English
+language: "en"
+
+# Geographic info (for content templates)
+state: "PA"           # Two-letter state code
+county: "County Name" # Full county name (e.g., "Butler County")
+
+# Optional: Schedule reference (not enforced by scripts)
+schedule:
+  discover: "Monday 9am"
+  monitor: "Monday 9am"
+  health: "Monday 9am"
+  compete: "Friday 3pm"
+  links: "Tuesday-Friday (various)"
