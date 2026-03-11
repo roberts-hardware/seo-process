@@ -18,16 +18,38 @@ SCHEDULE_NAME="${1:?Usage: schedule-all-clients.sh <schedule-name>}"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WORKSPACE_DIR="$REPO_ROOT/workspace"
 
-# Find all client directories
+# Find all client directories (must have seo/config.yaml)
 if [[ ! -d "$WORKSPACE_DIR" ]]; then
   echo "❌ Error: Workspace directory not found: $WORKSPACE_DIR"
   exit 1
 fi
 
-CLIENTS=$(find "$WORKSPACE_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+# Only include directories that have a valid client config
+CLIENTS=""
+for dir in "$WORKSPACE_DIR"/*/ ; do
+  if [[ -d "$dir" ]]; then
+    CLIENT_ID=$(basename "$dir")
+
+    # Skip hidden directories and non-client directories
+    if [[ "$CLIENT_ID" == .* ]] || [[ "$CLIENT_ID" == "seo" ]] || [[ "$CLIENT_ID" == "seo-agent" ]]; then
+      continue
+    fi
+
+    # Check if valid client (has config file)
+    if [[ -f "$dir/seo/config.yaml" ]]; then
+      CLIENTS="$CLIENTS$CLIENT_ID"$'\n'
+    fi
+  fi
+done
+
+CLIENTS=$(echo "$CLIENTS" | sed '/^$/d')  # Remove empty lines
 
 if [[ -z "$CLIENTS" ]]; then
-  echo "⚠️  No clients found in workspace"
+  echo "⚠️  No valid clients found in workspace"
+  echo ""
+  echo "Clients must have: workspace/{client-id}/seo/config.yaml"
+  echo ""
+  echo "Add a client with: ./bin/add-client.sh <client-id> <site-url> <competitors>"
   exit 0
 fi
 
