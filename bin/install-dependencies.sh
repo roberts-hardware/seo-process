@@ -22,18 +22,56 @@ PYTHON_VERSION=$(python3 --version)
 echo "✅ Found: $PYTHON_VERSION"
 echo ""
 
-# Install google-auth library for service account authentication
-echo "Installing google-auth (for Search Console API with service accounts)..."
-python3 -m pip install --user --upgrade google-auth
-
+# Check if google-auth is already installed
 if python3 -c "import google.auth" 2>/dev/null; then
-  echo "✅ google-auth installed successfully"
+  echo "✅ google-auth already installed"
 else
-  echo "❌ Failed to install google-auth"
+  echo "Installing google-auth (for Search Console API with service accounts)..."
   echo ""
-  echo "Try manually:"
-  echo "  pip3 install google-auth"
-  exit 1
+
+  # Try system package manager first (for Debian/Ubuntu with externally-managed Python)
+  if command -v apt &> /dev/null; then
+    echo "Detected apt package manager (Debian/Ubuntu)"
+    echo "Installing via apt (requires sudo)..."
+    echo ""
+    sudo apt update -qq
+    sudo apt install -y python3-google-auth
+
+    if python3 -c "import google.auth" 2>/dev/null; then
+      echo "✅ google-auth installed successfully via apt"
+    else
+      echo "❌ apt install failed, trying pip..."
+      python3 -m pip install --user --upgrade google-auth 2>/dev/null || python3 -m pip install --break-system-packages --upgrade google-auth
+    fi
+
+  # Try yum for CentOS/RHEL
+  elif command -v yum &> /dev/null; then
+    echo "Detected yum package manager (CentOS/RHEL)"
+    echo "Installing via yum (requires sudo)..."
+    echo ""
+    sudo yum install -y python3-google-auth
+
+  # Try pip for macOS or other systems
+  else
+    echo "Installing via pip..."
+    python3 -m pip install --user --upgrade google-auth 2>/dev/null || {
+      echo "⚠️  pip --user failed, trying with --break-system-packages..."
+      python3 -m pip install --break-system-packages --upgrade google-auth
+    }
+  fi
+
+  # Final check
+  if python3 -c "import google.auth" 2>/dev/null; then
+    echo "✅ google-auth installed successfully"
+  else
+    echo "❌ Failed to install google-auth"
+    echo ""
+    echo "Try manually:"
+    echo "  Debian/Ubuntu: sudo apt install python3-google-auth"
+    echo "  CentOS/RHEL: sudo yum install python3-google-auth"
+    echo "  Other: pip3 install google-auth"
+    exit 1
+  fi
 fi
 
 echo ""
