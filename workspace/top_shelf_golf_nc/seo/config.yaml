@@ -1,0 +1,63 @@
+# SEO Process Client Configuration
+# Client: top_shelf_golf_nc
+
+client_id: top_shelf_golf_nc
+site: "sc-domain:https://topshelfgolfnc.com"
+site_url: "https://topshelfgolfnc.com/"
+business_type: "Golf Club Fitting & Golf Performance Services"
+
+phone: "(919) 515-6527"
+years_in_business: 10+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Raleigh"
+      zip: "27607"
+      response_time: ""
+    - name: "Cary"
+      zip: "27513"
+      response_time: ""
+    - name: "Durham"
+      zip: "27701"
+      response_time: ""
+  secondary:
+    - "Apex"
+    - "Wake Forest"
+    - "Morrisville"
+    - "Chapel Hill"
+    - "Garner"
+
+
+services:
+  - "custom_golf_club_fitting"
+  - "driver_fitting"
+  - "iron_fitting"
+  - "putter_fitting"
+  - "wedge_fitting"
+  - "golf_swing_analysis"
+
+
+competitors:
+  - continentalgolf.net
+  - golftec.com/golf-lessons/north-raleigh
+  - clubchampion.com/locations/cary
+
+
+target_positions: [5, 20]
+min_search_volume: 30
+location_code: 1026152
+
+language: "en"
+state: "NC"
+county: "Wake County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

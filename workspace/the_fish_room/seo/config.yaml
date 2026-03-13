@@ -1,0 +1,61 @@
+# SEO Process Client Configuration
+# Client: the_fish_room
+
+client_id: the_fish_room
+site: "sc-domain:https://thefishroom.net"
+site_url: "https://www.thefishroom.net/"
+business_type: "Aquarium Store"
+
+phone: "(919) 501-7774"
+years_in_business: 15+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Raleigh"
+      zip: "27616"
+      response_time: ""
+    - name: "Cary"
+      zip: "27511"
+      response_time: ""
+    - name: "Charlotte"
+      zip: "28277"
+      response_time: ""
+  secondary:
+    - "Durham"
+    - "Apex"
+    - "Wake Forest"
+    - "Morrisville"
+    - "Garner"
+
+
+services:
+  - "freshwater_fish"
+  - "saltwater_fish"
+  - "live_coral"
+  - "aquatic_plants"
+  - "aquarium_supplies"
+
+
+competitors:
+  - aquariumoutfitterscarolina.com
+  - aquaticcreationsgroup.com
+
+
+target_positions: [5, 20]
+min_search_volume: 30
+location_code: 1026152
+
+language: "en"
+state: "NC"
+county: "Wake County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

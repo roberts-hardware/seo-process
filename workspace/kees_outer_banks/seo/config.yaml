@@ -1,0 +1,65 @@
+# SEO Process Client Configuration
+# Client: kees_outer_banks
+
+client_id: kees_outer_banks
+site: "sc-domain:https://keesouterbanks.com"
+site_url: "https://www.keesouterbanks.com/"
+business_type: "Vacation Rental & Property Management"
+
+phone: "866-316-1843"
+years_in_business: 10+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Kill Devil Hills"
+      zip: "27948"
+      response_time: ""
+    - name: "Nags Head"
+      zip: "27959"
+      response_time: ""
+    - name: "Kitty Hawk"
+      zip: "27949"
+      response_time: ""
+  secondary:
+    - "Corolla"
+    - "Duck"
+    - "Hatteras"
+    - "Manteo"
+    - "Rodanthe"
+    - "Salvo"
+    - "Buxton"
+    - "Frisc"
+
+
+services:
+  - "vacation_rentals"
+  - "property_management"
+  - "outer_banks_rentals"
+  - "wedding_&_event_rentals"
+  - "beach_equipment_rentals"
+
+
+competitors:
+  - surforsound.com
+  - hatterasrealty.com
+  - midgettrealty.com
+
+
+target_positions: [5, 20]
+min_search_volume: 200
+location_code: 1021078
+
+language: "en"
+state: "NC"
+county: "Dare County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

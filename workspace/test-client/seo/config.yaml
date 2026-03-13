@@ -1,0 +1,42 @@
+# SEO Process Client Configuration Template
+# Copy this to: workspace/{client-id}/seo/config.yaml
+
+# Client identifier (use lowercase, dashes for spaces)
+client_id: client-name
+
+# Google Search Console property URL
+# Format: sc-domain:example.com  OR  https://example.com/
+site: "sc-domain:example.com"
+
+# Actual website URL (used for health checks)
+site_url: "https://example.com"
+
+# Competitor domains to monitor (for gap analysis)
+competitors:
+  - competitor1.com
+  - competitor2.com
+  - competitor3.com
+
+# Strike zone: Target ranking positions to prioritize
+# Default [5, 20] means positions 5-20 (page 1-2)
+target_positions: [5, 20]
+
+# Minimum monthly search volume to consider
+min_search_volume: 100
+
+# DataForSEO location code
+# 2840 = United States
+# See: https://docs.dataforseo.com/v3/serp/google/locations/
+location_code: 2840
+
+# Language code
+# "en" = English
+language: "en"
+
+# Optional: Schedule reference (not enforced by scripts)
+schedule:
+  discover: "Monday 9am"
+  monitor: "Monday 9am"
+  health: "Monday 9am"
+  compete: "Friday 3pm"
+  links: "Tuesday-Friday (various)"

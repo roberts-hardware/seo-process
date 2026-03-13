@@ -1,0 +1,63 @@
+# SEO Process Client Configuration
+# Client: raleigh_digital
+
+client_id: raleigh_digital
+site: "sc-domain:https://raleighdigital.com"
+site_url: "https://www.raleighdigital.com/"
+business_type: "Digital Marketing Agency"
+
+phone: "(891) 989-1191"
+years_in_business: 18+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Raleigh"
+      zip: "27601"
+      response_time: ""
+    - name: "Durham"
+      zip: "27701"
+      response_time: ""
+    - name: "Cary"
+      zip: "27513"
+      response_time: ""
+  secondary:
+    - "Apex"
+    - "Wake Forest"
+    - "Morrisville"
+    - "Chapel Hill"
+    - "Garner"
+
+
+services:
+  - "seo_services"
+  - "local_seo"
+  - "ppc_management"
+  - "web_design_&_development"
+  - "shopify_seo"
+  - "conversion_rate_optimization"
+
+
+competitors:
+  - theedigital.com
+  - trimarkdigital.com
+  - bos.digital
+
+
+target_positions: [5, 20]
+min_search_volume: 50
+location_code: 1026152
+
+language: "en"
+state: "NC"
+county: "Wake County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

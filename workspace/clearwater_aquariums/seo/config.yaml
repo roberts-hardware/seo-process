@@ -1,0 +1,64 @@
+# SEO Process Client Configuration
+# Client: clearwater_aquariums
+
+client_id: clearwater_aquariums
+site: "sc-domain:https://clearwaternc.com"
+site_url: "https://www.clearwaternc.com/"
+business_type: "Aquarium Design & Maintenance"
+
+phone: "(919) 872-7171"
+years_in_business: 30+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Raleigh"
+      zip: "27615"
+      response_time: ""
+    - name: "Cary"
+      zip: "27513"
+      response_time: ""
+    - name: "Durham"
+      zip: "27701"
+      response_time: ""
+  secondary:
+    - "Wake Forest"
+    - "Apex"
+    - "Morrisville"
+    - "Holly Springs"
+    - "Garner"
+
+
+services:
+  - "aquarium_design"
+  - "custom_aquariums"
+  - "aquarium_installation"
+  - "aquarium_maintenance"
+  - "aquarium_relocation"
+  - "saltwater_aquariums"
+  - "freshwater_aquariums"
+
+
+competitors:
+  - aquascapesnc.com
+  - aquaticcreationsgroup.com
+  - oceancarerelocation.com
+
+
+target_positions: [5, 20]
+min_search_volume: 30
+location_code: 1026152
+
+language: "en"
+state: "NC"
+county: "Wake County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

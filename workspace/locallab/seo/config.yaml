@@ -1,0 +1,62 @@
+# SEO Process Client Configuration
+# Client: locallab
+
+client_id: locallab
+site: "sc-domain:https://locallab.io"
+site_url: "https://locallab.io/"
+business_type: "Reputation Management & Review Automation Software"
+
+phone: "(888) 123-4567"
+years_in_business: 3+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Raleigh"
+      zip: "27601"
+      response_time: ""
+    - name: "Durham"
+      zip: "27701"
+      response_time: ""
+    - name: "Cary"
+      zip: "27513"
+      response_time: ""
+  secondary:
+    - "Wake Forest"
+    - "Apex"
+    - "Morrisville"
+    - "Holly Springs"
+    - "Garner"
+
+
+services:
+  - "review_management_software"
+  - "google_review_automation"
+  - "customer_feedback_system"
+  - "sms_review_requests"
+  - "reputation_management"
+
+
+competitors:
+  - redsharkdigital.com
+  - reputationmanagementinc.com
+  - onlinereputationmanage.com
+
+
+target_positions: [5, 20]
+min_search_volume: 200
+location_code: 1026152
+
+language: "en"
+state: "NC"
+county: "Wake County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

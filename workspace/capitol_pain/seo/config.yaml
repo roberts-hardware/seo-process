@@ -1,0 +1,64 @@
+# SEO Process Client Configuration
+# Client: capitol_pain
+
+client_id: capitol_pain
+site: "sc-domain:https://capitolpain.com"
+site_url: "https://capitolpain.com/"
+business_type: "Pain Management Clinic"
+
+phone: "844-562-0518"
+years_in_business: 15+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Austin"
+      zip: "78757"
+      response_time: ""
+    - name: "Austin (South)"
+      zip: "78749"
+      response_time: ""
+    - name: "Bee Cave"
+      zip: "78738"
+      response_time: ""
+  secondary:
+    - "Cedar Park"
+    - "Georgetown"
+    - "Bastrop"
+    - "San Marcos"
+    - "Killeen"
+    - "Marble Falls"
+
+
+services:
+  - "epidural_steroid_injections"
+  - "vertiflex_procedure"
+  - "radiofrequency_ablation"
+  - "spinal_cord_stimulation"
+  - "discography"
+  - "chronic_pain_treatment"
+
+
+competitors:
+  - texaspainclinic.com
+  - advancedpaincare.com
+  - painmanagementaustin.com
+
+
+target_positions: [5, 20]
+min_search_volume: 500
+location_code: 1026481
+
+language: "en"
+state: "TX"
+county: "Travis County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

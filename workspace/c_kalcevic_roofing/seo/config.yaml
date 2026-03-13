@@ -1,0 +1,63 @@
+# SEO Process Client Configuration
+# Client: c_kalcevic_roofing
+
+client_id: c_kalcevic_roofing
+site: "sc-domain:https://ckalcevicroofing.com"
+site_url: "https://ckalcevicroofing.com/"
+business_type: "Roofing Contractor"
+
+phone: "(724) 494-5614"
+years_in_business: 25+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Beaver Falls"
+      zip: "15010"
+      response_time: ""
+    - name: "Beaver"
+      zip: "15009"
+      response_time: ""
+    - name: "New Brighton"
+      zip: "15066"
+      response_time: ""
+  secondary:
+    - "Chippewa Township"
+    - "Patterson Township"
+    - "Rochester"
+    - "Monaca"
+    - "Aliquippa"
+
+
+services:
+  - "residential_roofing"
+  - "commercial_roofing"
+  - "roof_repair"
+  - "roof_replacement"
+  - "storm_damage_repairs"
+  - "emergency_roof_repair"
+
+
+competitors:
+  - neillandsonroofing.com
+  - bradleysroofing.com
+  - hhiroofinginc.com
+
+
+target_positions: [5, 20]
+min_search_volume: 60
+location_code: 1023967
+
+language: "en"
+state: "PA"
+county: "Beaver County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

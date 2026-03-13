@@ -1,0 +1,64 @@
+# SEO Process Client Configuration
+# Client: clara_dermatology
+
+client_id: clara_dermatology
+site: "sc-domain:https://claradermatology.com"
+site_url: "https://claradermatology.com/"
+business_type: "Dermatology Clinic (Medical & Cosmetic)"
+
+phone: "919-655-3929"
+years_in_business: 4+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Cary"
+      zip: "27519"
+      response_time: ""
+    - name: "Raleigh"
+      zip: "27601"
+      response_time: ""
+    - name: "Durham"
+      zip: "27701"
+      response_time: ""
+  secondary:
+    - "Chapel Hill"
+    - "Morrisville"
+    - "Apex"
+    - "Holly Springs"
+    - "Wake Forest"
+
+
+services:
+  - "medical_dermatology"
+  - "cosmetic_dermatology"
+  - "botox_&_neurotoxins"
+  - "dermal_fillers"
+  - "laser_treatments"
+  - "microneedling"
+  - "chemical_peels"
+
+
+competitors:
+  - noorderm.com
+  - centraldermcenter.com
+  - caryskincenter.com
+
+
+target_positions: [5, 20]
+min_search_volume: 200
+location_code: 1026259
+
+language: "en"
+state: "NC"
+county: "Wake County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

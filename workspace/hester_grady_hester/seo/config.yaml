@@ -1,0 +1,65 @@
+# SEO Process Client Configuration
+# Client: hester_grady_hester
+
+client_id: hester_grady_hester
+site: "sc-domain:https://hghgp.com"
+site_url: "https://hghgp.com/"
+business_type: "Law Firm / Legal Services"
+
+phone: "(910) 862-3191"
+years_in_business: 100+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Elizabethtown"
+      zip: "28337"
+      response_time: ""
+    - name: "Wilmington"
+      zip: "28401"
+      response_time: ""
+    - name: "Whiteville"
+      zip: "28472"
+      response_time: ""
+  secondary:
+    - "Bladenboro"
+    - "Clarkton"
+    - "Leland"
+    - "Southport"
+    - "Shallotte"
+
+
+services:
+  - "personal_injury_law"
+  - "civil_litigation"
+  - "criminal_defense"
+  - "family_&_divorce_law"
+  - "workers_compensation"
+  - "social_security_disability"
+  - "real_estate_law"
+  - "estate_planning"
+
+
+competitors:
+  - ldridgelawgroup.com
+  - elizabethtownfamilylaw.com
+  - humphrieslaw.org
+
+
+target_positions: [5, 20]
+min_search_volume: 100
+location_code: 9058796
+
+language: "en"
+state: "NC"
+county: "Bladen County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

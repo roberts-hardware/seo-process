@@ -1,0 +1,62 @@
+# SEO Process Client Configuration
+# Client: lees_fresh_market
+
+client_id: lees_fresh_market
+site: "sc-domain:https://leesfreshmarketnc.com"
+site_url: "https://leesfreshmarketnc.com/"
+business_type: "Butcher Shop"
+
+phone: "(919) 894-2587"
+years_in_business: 10+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Benson"
+      zip: "27504"
+      response_time: ""
+    - name: "Four Oaks"
+      zip: "27524"
+      response_time: ""
+    - name: "Dunn"
+      zip: "28334"
+      response_time: ""
+  secondary:
+    - "Smithfield"
+    - "Angier"
+    - "Clayton"
+    - "Selma"
+    - "Garner"
+
+
+services:
+  - "fresh_meat_market"
+  - "butcher_shop"
+  - "custom_meat_processing"
+  - "beef_&_pork_cuts"
+  - "bulk_meat_packages"
+
+
+competitors:
+  - thecarolinabutchershop.com
+  - primebrothersbutchershoppe.com
+  - theorganicbutchershop.com
+
+
+target_positions: [5, 20]
+min_search_volume: 50
+location_code: 1026152
+
+language: "en"
+state: "NC"
+county: "Johnston County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

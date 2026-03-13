@@ -1,0 +1,63 @@
+# SEO Process Client Configuration
+# Client: carolina_recreation
+
+client_id: carolina_recreation
+site: "sc-domain:https://carolina-recreation.com"
+site_url: "https://carolina-recreation.com/"
+business_type: "Commercial Playground Equipment & Recreation Design"
+
+phone: "(704) 664-1833"
+years_in_business: 10+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Mooresville"
+      zip: "28117"
+      response_time: ""
+    - name: "Charlotte"
+      zip: "28202"
+      response_time: ""
+    - name: "Raleigh"
+      zip: "27601"
+      response_time: ""
+  secondary:
+    - "North Carolina"
+    - "South Carolina"
+    - "Virginia"
+    - "Tennessee"
+    - "Georgia"
+
+
+services:
+  - "commercial_playground_equipment"
+  - "playground_design"
+  - "playground_installation"
+  - "splash_pads"
+  - "shade_structures"
+  - "park_&_site_amenities"
+
+
+competitors:
+  - backyardplayground.net
+  - rainbowplayofnc.com
+  - woodplaync.com
+
+
+target_positions: [5, 20]
+min_search_volume: 30
+location_code: 1026153
+
+language: "en"
+state: "NC"
+county: "Iredell County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

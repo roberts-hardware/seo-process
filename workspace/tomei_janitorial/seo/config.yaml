@@ -1,0 +1,63 @@
+# SEO Process Client Configuration
+# Client: tomei_janitorial
+
+client_id: tomei_janitorial
+site: "sc-domain:https:/tomeijanitorial.com"
+site_url: "https:/tomeijanitorial.com/"
+business_type: "Commercial Janitorial & Cleaning Services"
+
+phone: "(724) 378-9321"
+years_in_business: 15+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Aliquippa"
+      zip: "15001"
+      response_time: ""
+    - name: "Beaver Falls"
+      zip: "15010"
+      response_time: ""
+    - name: "Monaca"
+      zip: "15061"
+      response_time: ""
+  secondary:
+    - "Ambridge"
+    - "Rochester"
+    - "New Brighton"
+    - "Center Township"
+    - "Chippewa Townshi"
+
+
+services:
+  - "commercial_cleaning"
+  - "office_cleaning"
+  - "window_cleaning"
+  - "carpet_cleaning"
+  - "floor_refinishing"
+  - "power_washing"
+
+
+competitors:
+  - maidonthespot.com
+  - snowywhitedrycleaners.com
+  - jubileecleaning.co
+
+
+target_positions: [5, 20]
+min_search_volume: 30
+location_code: 1023967
+
+language: "en"
+state: "PA"
+county: "Beaver County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"

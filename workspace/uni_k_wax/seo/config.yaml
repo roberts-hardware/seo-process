@@ -1,0 +1,64 @@
+# SEO Process Client Configuration
+# Client: uni_k_wax
+
+client_id: uni_k_wax
+site: "sc-domain:https://unikwax.com"
+site_url: "https://www.unikwax.com/"
+business_type: "Hair Removal Services"
+
+phone: "N/A"
+years_in_business: 30+
+
+licenses:
+  - "License TBD"
+certifications:
+  - "Certification TBD"
+
+service_areas:
+  primary:
+    - name: "Miami"
+      zip: "33101"
+      response_time: ""
+    - name: "New York"
+      zip: "10001"
+      response_time: ""
+    - name: "New Jersey"
+      zip: "7302"
+      response_time: ""
+  secondary:
+    - "Florida"
+    - "Texas"
+    - "Arizona"
+    - "Connecticut"
+    - "Colorado"
+    - "Michigan"
+
+
+services:
+  - "brazilian_wax"
+  - "bikini_wax"
+  - "facial_waxing"
+  - "body_waxing"
+  - "men’s_waxing"
+  - "after_care_products"
+
+
+competitors:
+  - SugaringNYC.com
+  - waxcenter.com
+  - amazinglashstudio.com
+
+
+target_positions: [5, 20]
+min_search_volume: 200
+location_code: 1025890
+
+language: "en"
+state: "FL"
+county: "Miami-Dade County"
+
+schedule:
+  discover: "Sunday 8pm"
+  monitor: "Sunday 9pm"
+  health: "Monday 9am"
+  compete: "Friday 3pm"
