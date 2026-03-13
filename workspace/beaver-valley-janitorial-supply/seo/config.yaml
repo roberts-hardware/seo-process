@@ -16,8 +16,8 @@ certifications:
 
 service_areas:
   primary:
-    - name: "Beaver"
-      zip: "15009"
+    - name: "Beaver Falls"
+      zip: "15010"
       response_time: ""
     - name: "Butler"
       zip: "16001"
