@@ -213,15 +213,21 @@ declare -A INBOUND_COUNT
 
 # First pass: count inbound links
 while IFS= read -r PAGE; do
+  [[ -z "$PAGE" ]] && continue
   SLUG=$(echo "$PAGE" | sed "s|https://${DOMAIN}||")
+  # Normalize empty slug (homepage) to "/"
+  [[ -z "$SLUG" ]] && SLUG="/"
   INBOUND_COUNT["$SLUG"]=0
 done <<< "$URLS"
 
 while IFS= read -r PAGE; do
+  [[ -z "$PAGE" ]] && continue
   BODY=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L --max-time 10 "$PAGE" 2>/dev/null)
   INTERNAL_LINKS=$(echo "$BODY" | grep -oP "href=\"\K[^\"]*" | grep -E "^/|^https://${DOMAIN}" | sed "s|https://${DOMAIN}||" | sort -u)
-  
+
   SLUG=$(echo "$PAGE" | sed "s|https://${DOMAIN}||")
+  # Normalize empty slug (homepage) to "/"
+  [[ -z "$SLUG" ]] && SLUG="/"
   LINK_COUNT=$(echo "$INTERNAL_LINKS" | grep -c . || true)
   
   echo "📄 ${SLUG} → ${LINK_COUNT} outbound internal links"
@@ -229,6 +235,8 @@ while IFS= read -r PAGE; do
   # Count inbound
   while IFS= read -r LINK; do
     [[ -z "$LINK" ]] && continue
+    # Normalize empty link (homepage) to "/"
+    [[ "$LINK" == "" ]] && LINK="/"
     CURRENT="${INBOUND_COUNT[$LINK]:-0}"
     INBOUND_COUNT["$LINK"]=$((CURRENT + 1))
   done <<< "$INTERNAL_LINKS"
