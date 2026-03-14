@@ -73,6 +73,10 @@ mkdir -p "$RESEARCH_DIR"
 
 # 5. For each brief, run research
 COUNT=0
+SUCCESS=0
+WARNINGS=0
+FAILED=0
+
 echo "DEBUG: Starting for loop..."
 for BRIEF in "${BRIEFS[@]}"; do
   echo "DEBUG: In loop, processing: $BRIEF"
@@ -124,10 +128,24 @@ for BRIEF in "${BRIEFS[@]}"; do
 
   # Quality check
   echo "🔍 Step 4/4: Quality check..."
-  if "$REPO_ROOT/bin/check-content-quality.sh" "$ARTICLE_FILE" "$BRIEF"; then
+  QUALITY_REPORT="$REPO_ROOT/workspace/$CLIENT_ID/content/quality-reports/${BRIEF_NAME}-quality.txt"
+  mkdir -p "$(dirname "$QUALITY_REPORT")"
+
+  QUALITY_EXIT_CODE=0
+  "$REPO_ROOT/bin/check-content-quality.sh" "$ARTICLE_FILE" "$BRIEF" > "$QUALITY_REPORT" 2>&1 || QUALITY_EXIT_CODE=$?
+
+  cat "$QUALITY_REPORT"
+  echo ""
+
+  if [[ $QUALITY_EXIT_CODE -eq 0 ]]; then
     echo "✅ Quality check passed"
+    SUCCESS=$((SUCCESS + 1))
+  elif [[ $QUALITY_EXIT_CODE -eq 1 ]]; then
+    echo "❌ Quality check FAILED - critical issues"
+    FAILED=$((FAILED + 1))
   else
-    echo "⚠️  Quality issues detected - review required"
+    echo "⚠️  Quality check passed with warnings"
+    WARNINGS=$((WARNINGS + 1))
   fi
   echo ""
 
@@ -137,6 +155,13 @@ for BRIEF in "${BRIEFS[@]}"; do
     sleep 30
   fi
 done
+
+echo "╔════════════════════════════════════════════════════════════"
+echo "║ Content Pipeline Complete"
+echo "║ Success: $SUCCESS"
+echo "║ Warnings: $WARNINGS"
+echo "║ Failed: $FAILED"
+echo "╚════════════════════════════════════════════════════════════"
 
 echo "╔════════════════════════════════════════════════════════════"
 echo "║ Content Pipeline Complete"

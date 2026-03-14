@@ -42,9 +42,22 @@ if [[ -n "$MESSAGE" ]]; then
 Details: $MESSAGE"
 fi
 
+# Add GitHub link to generated content
+GITHUB_REPO="https://github.com/roberts-hardware/seo-process"
+
+if [[ "$SCHEDULE_NAME" == "content-weekly" ]]; then
+  NOTIFICATION_BODY="$NOTIFICATION_BODY
+
+📝 View Generated Content:
+$GITHUB_REPO/tree/main/workspace
+
+📊 Quality Reports:
+Check workspace/*/content/quality-reports/"
+fi
+
 NOTIFICATION_BODY="$NOTIFICATION_BODY
 
-Dashboard: https://seo-dashboard.yourcompany.com"
+🔗 View All Results: $GITHUB_REPO"
 
 # Send to Slack if configured
 if [[ -n "$SLACK_WEBHOOK_URL" ]]; then
