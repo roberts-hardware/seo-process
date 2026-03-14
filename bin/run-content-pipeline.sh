@@ -53,13 +53,21 @@ for b in "${BRIEFS[@]}"; do
 done
 echo ""
 
+# Debug: verify array contents
+echo "DEBUG: Array size: ${#BRIEFS[@]}"
+echo "DEBUG: Array contents:"
+printf 'DEBUG: [%s]\n' "${BRIEFS[@]}"
+echo ""
+
 # 4. Create research directory
 RESEARCH_DIR="$REPO_ROOT/workspace/$CLIENT_ID/content/research"
 mkdir -p "$RESEARCH_DIR"
 
 # 5. For each brief, run research
 COUNT=0
+echo "DEBUG: Starting for loop..."
 for BRIEF in "${BRIEFS[@]}"; do
+  echo "DEBUG: In loop, processing: $BRIEF"
   ((COUNT++))
   BRIEF_NAME=$(basename "$BRIEF" .md)
 
