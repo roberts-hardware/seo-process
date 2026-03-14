@@ -36,7 +36,8 @@ if [[ ! -d "$BRIEF_DIR" ]]; then
   exit 0
 fi
 
-BRIEFS=($(ls -1t "$BRIEF_DIR"/*.md 2>/dev/null | head -n "$CONTENT_LIMIT" || true))
+# Read briefs into array (handles spaces in filenames)
+mapfile -t BRIEFS < <(ls -t "$BRIEF_DIR"/*.md 2>/dev/null | head -n "$CONTENT_LIMIT")
 
 if [[ ${#BRIEFS[@]} -eq 0 ]]; then
   echo "⚠️  No briefs to process"
@@ -44,6 +45,12 @@ if [[ ${#BRIEFS[@]} -eq 0 ]]; then
 fi
 
 echo "📝 Found ${#BRIEFS[@]} briefs to process (limit: $CONTENT_LIMIT)"
+echo ""
+
+# Debug: show what briefs were found
+for b in "${BRIEFS[@]}"; do
+  echo "   - $(basename "$b")"
+done
 echo ""
 
 # 4. Create research directory
