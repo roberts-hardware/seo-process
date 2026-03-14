@@ -9,6 +9,7 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WORKSPACE="$REPO_ROOT/workspace/$CLIENT_ID"
 CONFIG="$WORKSPACE/seo/config.yaml"
 CONTENT_DIR="$WORKSPACE/content"
+BRIEF_DIR="$CONTENT_DIR/briefs"
 
 # Validate workspace exists
 if [[ ! -d "$WORKSPACE" ]]; then
@@ -26,7 +27,7 @@ echo "📋 Generating content briefs for $CLIENT_ID..."
 echo ""
 
 # Create content directory if needed
-mkdir -p "$CONTENT_DIR"
+mkdir -p "$BRIEF_DIR"
 
 # Extract config values
 BUSINESS_TYPE=$(grep '^business_type:' "$CONFIG" 2>/dev/null | awk '{print $2}' | tr -d '"' || echo "roofing")
@@ -80,7 +81,7 @@ while IFS= read -r SERVICE; do
 
   echo "  - $SERVICE_TITLE"
 
-  cat > "$CONTENT_DIR/brief-$SERVICE_SLUG.md" <<EOF
+  cat > "$BRIEF_DIR/brief-$SERVICE_SLUG.md" <<EOF
 # Content Brief: $SERVICE_TITLE
 
 **Generated:** $(date +%Y-%m-%d)
@@ -231,7 +232,7 @@ while IFS= read -r AREA; do
 
   echo "  - $AREA"
 
-  cat > "$CONTENT_DIR/brief-$AREA_SLUG.md" <<EOF
+  cat > "$BRIEF_DIR/brief-$AREA_SLUG.md" <<EOF
 # Content Brief: $AREA
 
 **Generated:** $(date +%Y-%m-%d)
@@ -392,13 +393,13 @@ done <<< "$PRIMARY_AREAS"
 echo ""
 echo "✅ Content brief generation complete!"
 echo ""
-echo "📁 Location: $CONTENT_DIR/"
+echo "📁 Location: $BRIEF_DIR/"
 echo "📄 Generated: $TOTAL_BRIEFS briefs"
 echo "   - Service hubs: $NUM_SERVICES"
 echo "   - Location hubs: $NUM_LOCATIONS"
 echo ""
 echo "Next steps:"
-echo "1. Review briefs in $CONTENT_DIR/"
+echo "1. Review briefs in $BRIEF_DIR/"
 echo "2. Use bin/auto-generate-page.sh to create 80% complete pages"
 echo "3. Or manually write using templates in templates/$BUSINESS_TYPE/"
 echo ""
