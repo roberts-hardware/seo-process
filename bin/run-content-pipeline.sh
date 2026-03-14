@@ -68,7 +68,7 @@ COUNT=0
 echo "DEBUG: Starting for loop..."
 for BRIEF in "${BRIEFS[@]}"; do
   echo "DEBUG: In loop, processing: $BRIEF"
-  ((COUNT++))
+  COUNT=$((COUNT + 1))
   BRIEF_NAME=$(basename "$BRIEF" .md)
 
   echo "─────────────────────────────────────────────────────────"
