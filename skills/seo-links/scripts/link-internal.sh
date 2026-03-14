@@ -21,78 +21,88 @@ if [[ -z "$URLS" ]]; then
 fi
 
 if [[ -z "$URLS" ]]; then
-  echo "No sitemap found. Attempting to crawl site with Cloudflare..."
+  echo "No sitemap found. Crawling site to discover pages..."
 
-  # Debug: show what environment variables we have
-  echo "DEBUG: CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-NOT_SET}"
-  echo "DEBUG: CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:0:20}..."
+  # Simple bash-based crawler
+  declare -A VISITED
+  declare -A TO_CRAWL
+  DISCOVERED_URLS=""
 
-  # Check for Cloudflare API credentials
-  if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]] || [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
-    echo "⚠️  CLOUDFLARE_ACCOUNT_ID or CLOUDFLARE_API_TOKEN not set."
-    echo "   Set these in .env or add sitemap.xml to site"
+  # Start with homepage
+  TO_CRAWL["https://${DOMAIN}/"]=1
+  MAX_PAGES=50
+  PAGE_COUNT=0
 
-    # Try to load .env directly as fallback
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-    if [[ -f "$REPO_ROOT/.env" ]]; then
-      echo "   Attempting to load from $REPO_ROOT/.env..."
-      set -a
-      # shellcheck disable=SC1091
-      source "$REPO_ROOT/.env"
-      set +a
+  echo "Starting crawl from https://${DOMAIN}/ (max: $MAX_PAGES pages)"
 
-      # Check again
-      if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]] || [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
-        echo "   Still not set after loading .env"
-        exit 1
-      else
-        echo "   ✅ Loaded from .env"
-      fi
-    else
-      exit 1
+  while [[ ${#TO_CRAWL[@]} -gt 0 ]] && [[ $PAGE_COUNT -lt $MAX_PAGES ]]; do
+    # Get first URL to crawl
+    CURRENT_URL=""
+    for url in "${!TO_CRAWL[@]}"; do
+      CURRENT_URL="$url"
+      break
+    done
+
+    # Remove from TO_CRAWL
+    unset TO_CRAWL["$CURRENT_URL"]
+
+    # Skip if already visited
+    if [[ -n "${VISITED[$CURRENT_URL]:-}" ]]; then
+      continue
     fi
-  fi
 
-  # Use Cloudflare Browser Rendering API to crawl the site
-  CRAWL_RESPONSE=$(curl -s -X POST \
-    "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/browser/crawl" \
-    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -d "{
-      \"url\": \"https://${DOMAIN}\",
-      \"maxDepth\": 2,
-      \"maxPages\": 50,
-      \"waitUntil\": \"networkidle\"
-    }")
+    # Mark as visited
+    VISITED["$CURRENT_URL"]=1
+    DISCOVERED_URLS="$DISCOVERED_URLS$CURRENT_URL"$'\n'
+    PAGE_COUNT=$((PAGE_COUNT + 1))
 
-  # Check for errors
-  SUCCESS=$(echo "$CRAWL_RESPONSE" | grep -oP '"success":\K(true|false)' || echo "false")
+    echo "Crawling [$PAGE_COUNT/$MAX_PAGES]: $CURRENT_URL"
 
-  if [[ "$SUCCESS" != "true" ]]; then
-    echo "⚠️  Cloudflare crawl failed. Response:"
-    echo "$CRAWL_RESPONSE" | head -5
-    echo ""
-    echo "Possible reasons:"
-    echo "  1. Browser Rendering API not enabled on your Cloudflare account"
-    echo "  2. Feature not available on your plan tier"
-    echo "  3. Endpoint not yet available in your region"
-    echo ""
-    echo "Recommendation: Add sitemap.xml to $DOMAIN for internal link analysis"
-    echo "Skipping internal link analysis for this site."
-    exit 0
-  fi
+    # Fetch page and extract links
+    PAGE_HTML=$(curl -s -L -A "Mozilla/5.0 (compatible; SEOBot/1.0)" --max-time 10 "$CURRENT_URL" 2>/dev/null || true)
 
-  # Extract URLs from crawl results
-  URLS=$(echo "$CRAWL_RESPONSE" | grep -oP '"url":"\K[^"]+' | grep "^https://${DOMAIN}" | sort -u)
+    if [[ -z "$PAGE_HTML" ]]; then
+      continue
+    fi
+
+    # Extract all href links
+    LINKS=$(echo "$PAGE_HTML" | grep -oP 'href=["'\'']\K[^"'\'']+' | grep -v '^#' | grep -v '^javascript:' | grep -v '^mailto:' | grep -v '^tel:' || true)
+
+    # Process each link
+    while IFS= read -r LINK; do
+      [[ -z "$LINK" ]] && continue
+
+      # Convert relative URLs to absolute
+      if [[ "$LINK" =~ ^https?:// ]]; then
+        FULL_URL="$LINK"
+      elif [[ "$LINK" =~ ^/ ]]; then
+        FULL_URL="https://${DOMAIN}${LINK}"
+      else
+        # Skip relative paths without leading slash
+        continue
+      fi
+
+      # Only add if it's on the same domain and not visited
+      if [[ "$FULL_URL" =~ ^https?://(www\.)?${DOMAIN} ]] && [[ -z "${VISITED[$FULL_URL]:-}" ]]; then
+        # Remove URL fragments and query strings for crawling purposes
+        CLEAN_URL=$(echo "$FULL_URL" | sed 's/#.*//' | sed 's/?.*//')
+        TO_CRAWL["$CLEAN_URL"]=1
+      fi
+    done <<< "$LINKS"
+
+    # Rate limiting
+    sleep 0.2
+  done
+
+  URLS=$(echo "$DISCOVERED_URLS" | sed '/^$/d')
 
   if [[ -z "$URLS" ]]; then
-    echo "❌ No URLs found in crawl results"
+    echo "❌ No URLs discovered during crawl"
     exit 1
   fi
 
   URL_COUNT=$(echo "$URLS" | wc -l)
-  echo "✅ Crawled $URL_COUNT pages"
+  echo "✅ Crawled and discovered $URL_COUNT pages"
 fi
 
 URL_COUNT=$(echo "$URLS" | wc -l)
