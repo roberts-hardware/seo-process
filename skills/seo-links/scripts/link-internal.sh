@@ -23,11 +23,35 @@ fi
 if [[ -z "$URLS" ]]; then
   echo "No sitemap found. Attempting to crawl site with Cloudflare..."
 
+  # Debug: show what environment variables we have
+  echo "DEBUG: CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID:-NOT_SET}"
+  echo "DEBUG: CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN:0:20}..."
+
   # Check for Cloudflare API credentials
   if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]] || [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
     echo "⚠️  CLOUDFLARE_ACCOUNT_ID or CLOUDFLARE_API_TOKEN not set."
     echo "   Set these in .env or add sitemap.xml to site"
-    exit 1
+
+    # Try to load .env directly as fallback
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+    if [[ -f "$REPO_ROOT/.env" ]]; then
+      echo "   Attempting to load from $REPO_ROOT/.env..."
+      set -a
+      # shellcheck disable=SC1091
+      source "$REPO_ROOT/.env"
+      set +a
+
+      # Check again
+      if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]] || [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+        echo "   Still not set after loading .env"
+        exit 1
+      else
+        echo "   ✅ Loaded from .env"
+      fi
+    else
+      exit 1
+    fi
   fi
 
   # Use Cloudflare Browser Rendering API to crawl the site
