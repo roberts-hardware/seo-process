@@ -23,7 +23,85 @@ fi
 if [[ -z "$URLS" ]]; then
   echo "No sitemap found. Crawling site to discover pages..."
 
-  # Simple bash-based crawler
+  # Try using Scrapling if available (much faster and more reliable)
+  SCRAPLING_PATH="$HOME/.openclaw/workspace/Scrapling/.venv/bin/python"
+  if [[ -f "$SCRAPLING_PATH" ]]; then
+    echo "Using Scrapling crawler..."
+
+    # Create temp Python script to crawl with Scrapling
+    TEMP_SCRIPT=$(mktemp)
+    cat > "$TEMP_SCRIPT" <<'PYSCRIPT'
+import sys
+from scrapling import Fetcher
+
+domain = sys.argv[1]
+max_pages = int(sys.argv[2]) if len(sys.argv) > 2 else 50
+
+visited = set()
+to_visit = [f"https://{domain}/"]
+discovered_urls = []
+
+fetcher = Fetcher()
+
+while to_visit and len(discovered_urls) < max_pages:
+    url = to_visit.pop(0)
+
+    if url in visited:
+        continue
+
+    visited.add(url)
+    print(f"Crawling [{len(discovered_urls)+1}/{max_pages}]: {url}", file=sys.stderr)
+
+    try:
+        page = fetcher.get(url, timeout=10)
+        discovered_urls.append(url)
+
+        # Extract all links
+        links = page.css('a[href]')
+        for link in links:
+            href = link.attrib.get('href', '')
+
+            # Skip non-http links
+            if href.startswith(('#', 'javascript:', 'mailto:', 'tel:')):
+                continue
+
+            # Convert relative to absolute
+            if href.startswith('/'):
+                full_url = f"https://{domain}{href}"
+            elif href.startswith('http'):
+                full_url = href
+            else:
+                continue
+
+            # Only add same-domain links
+            if domain in full_url and full_url not in visited:
+                # Remove fragments and query params for crawling
+                clean_url = full_url.split('#')[0].split('?')[0]
+                if clean_url not in to_visit:
+                    to_visit.append(clean_url)
+
+    except Exception as e:
+        print(f"Error crawling {url}: {e}", file=sys.stderr)
+        continue
+
+# Output URLs
+for url in discovered_urls:
+    print(url)
+PYSCRIPT
+
+    # Run Scrapling crawler
+    URLS=$("$SCRAPLING_PATH" "$TEMP_SCRIPT" "$DOMAIN" 50 2>&1 | grep "^https://")
+    rm -f "$TEMP_SCRIPT"
+
+    if [[ -n "$URLS" ]]; then
+      URL_COUNT=$(echo "$URLS" | wc -l)
+      echo "✅ Scrapling discovered $URL_COUNT pages"
+    fi
+  fi
+
+  # Fallback to simple bash-based crawler if Scrapling failed or not available
+  if [[ -z "$URLS" ]]; then
+    echo "Using bash crawler..."
   declare -A VISITED
   declare -A TO_CRAWL
   DISCOVERED_URLS=""
@@ -94,15 +172,16 @@ if [[ -z "$URLS" ]]; then
     sleep 0.2
   done
 
-  URLS=$(echo "$DISCOVERED_URLS" | sed '/^$/d')
+    URLS=$(echo "$DISCOVERED_URLS" | sed '/^$/d')
 
-  if [[ -z "$URLS" ]]; then
-    echo "❌ No URLs discovered during crawl"
-    exit 1
+    if [[ -z "$URLS" ]]; then
+      echo "❌ No URLs discovered during crawl"
+      exit 1
+    fi
+
+    URL_COUNT=$(echo "$URLS" | wc -l)
+    echo "✅ Bash crawler discovered $URL_COUNT pages"
   fi
-
-  URL_COUNT=$(echo "$URLS" | wc -l)
-  echo "✅ Crawled and discovered $URL_COUNT pages"
 fi
 
 URL_COUNT=$(echo "$URLS" | wc -l)
