@@ -3,6 +3,7 @@
 set +o pipefail
 set -e
 
+WORKSPACE_ROOT="${CLAWD_WORKSPACE:-$HOME/clawd/workspace}"
 DOMAIN="${1:?Usage: health-crawl.sh <domain> [--sitemap URL] [--limit 50]}"
 SITEMAP="https://${DOMAIN}/sitemap.xml"
 LIMIT=50
@@ -122,5 +123,5 @@ else
 fi
 
 # Save snapshot
-mkdir -p workspace/seo/health 2>/dev/null || true
-echo "{\"date\":\"$(date +%Y-%m-%d)\",\"domain\":\"${DOMAIN}\",\"broken\":${BROKEN},\"missing_title\":${MISSING_TITLE},\"missing_desc\":${MISSING_DESC},\"missing_canonical\":${MISSING_CANONICAL},\"mixed_content\":${MIXED_CONTENT}}" > "workspace/seo/health/crawl-$(date +%Y-%m-%d).json" 2>/dev/null || true
+mkdir -p "$WORKSPACE_ROOT/seo/health" 2>/dev/null || true
+echo "{\"date\":\"$(date +%Y-%m-%d)\",\"domain\":\"${DOMAIN}\",\"broken\":${BROKEN},\"missing_title\":${MISSING_TITLE},\"missing_desc\":${MISSING_DESC},\"missing_canonical\":${MISSING_CANONICAL},\"mixed_content\":${MIXED_CONTENT}}" > "$WORKSPACE_ROOT/seo/health/crawl-$(date +%Y-%m-%d).json" 2>/dev/null || true

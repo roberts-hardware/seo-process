@@ -14,15 +14,10 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-GSC_AUTH_SCRIPT="$HOME/.openclaw/workspace/skills/seo-agent/scripts/get-token.sh"
+WORKSPACE_ROOT="${CLAWD_WORKSPACE:-$HOME/clawd/workspace}"
+GSC_AUTH_SCRIPT="$SCRIPT_DIR/get-token.sh"
 DFS_BASE="https://api.dataforseo.com"
-CONFIG_FILE="$HOME/.openclaw/workspace/seo-agent/config.yaml"
-
-ENV_FILE="$HOME/.openclaw/workspace/skills/seo-agent/.env"
-if [[ -f "$ENV_FILE" ]]; then
-  # shellcheck disable=SC1090
-  source "$ENV_FILE"
-fi
+CONFIG_FILE="$WORKSPACE_ROOT/seo/config.yaml"
 
 # --- Defaults ---
 SITE=""

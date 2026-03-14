@@ -1,3 +1,13 @@
 # Local secrets
+.env
 **/.env
+.passphrase
 **/.passphrase
+
+# Credentials
+**/credentials.json
+**/*-token.json
+
+# OS files
+.DS_Store
+**/.DS_Store

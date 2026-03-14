@@ -2,6 +2,7 @@
 # health-speed.sh — PageSpeed Insights + Core Web Vitals check
 set -e
 
+WORKSPACE_ROOT="${CLAWD_WORKSPACE:-$HOME/clawd/workspace}"
 URL="${1:?Usage: health-speed.sh <url> [--mobile|--desktop|--both]}"
 STRATEGY="${2:---both}"
 API_KEY="${PAGESPEED_API_KEY:-}"
@@ -88,7 +89,7 @@ check_speed() {
   ' 2>/dev/null || echo "    (none detected)"
   
   # Save snapshot
-  mkdir -p workspace/seo/health 2>/dev/null || true
+  mkdir -p "$WORKSPACE_ROOT/seo/health" 2>/dev/null || true
   echo "$response" | jq '{
     date: now | strftime("%Y-%m-%d"),
     strategy: "'"$strategy"'",
@@ -98,7 +99,7 @@ check_speed() {
     lcp: (.loadingExperience.metrics.LARGEST_CONTENTFUL_PAINT_MS.percentile // null),
     inp: (.loadingExperience.metrics.INTERACTION_TO_NEXT_PAINT.percentile // null),
     cls: (.loadingExperience.metrics.CUMULATIVE_LAYOUT_SHIFT_SCORE.percentile // null)
-  }' > "workspace/seo/health/speed-$(date +%Y-%m-%d)-${strategy}.json" 2>/dev/null || true
+  }' > "$WORKSPACE_ROOT/seo/health/speed-$(date +%Y-%m-%d)-${strategy}.json" 2>/dev/null || true
 }
 
 echo "🏥 PageSpeed + Core Web Vitals Check"
@@ -113,4 +114,4 @@ esac
 
 echo ""
 echo "======================================"
-echo "Done. Snapshots saved to workspace/seo/health/"
+echo "Done. Snapshots saved to $WORKSPACE_ROOT/seo/health/"

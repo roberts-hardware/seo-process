@@ -11,15 +11,11 @@
 
 set -euo pipefail
 
-GSC_AUTH_SCRIPT="$HOME/.openclaw/workspace/skills/seo-agent/scripts/get-token.sh"
-SNAPSHOT_DIR="$HOME/.openclaw/workspace/seo-agent/snapshots"
-CONFIG_FILE="$HOME/.openclaw/workspace/seo-agent/config.yaml"
-
-ENV_FILE="$HOME/.openclaw/workspace/skills/seo-agent/.env"
-if [[ -f "$ENV_FILE" ]]; then
-  # shellcheck disable=SC1090
-  source "$ENV_FILE"
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_ROOT="${CLAWD_WORKSPACE:-$HOME/clawd/workspace}"
+GSC_AUTH_SCRIPT="$SCRIPT_DIR/get-token.sh"
+SNAPSHOT_DIR="$WORKSPACE_ROOT/seo/snapshots"
+CONFIG_FILE="$WORKSPACE_ROOT/seo/config.yaml"
 
 SITE=""
 DAYS=28

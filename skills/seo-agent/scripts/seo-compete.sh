@@ -11,8 +11,9 @@
 
 set -euo pipefail
 
+WORKSPACE_ROOT="${CLAWD_WORKSPACE:-$HOME/clawd/workspace}"
 DFS_BASE="https://api.dataforseo.com"
-CONFIG_FILE="$HOME/clawd/workspace/seo-agent/config.yaml"
+CONFIG_FILE="$WORKSPACE_ROOT/seo/config.yaml"
 
 SITE=""
 COMPETITOR=""

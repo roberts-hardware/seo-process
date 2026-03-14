@@ -2,6 +2,7 @@
 # health-images.sh — Image optimization audit
 set -e
 
+WORKSPACE_ROOT="${CLAWD_WORKSPACE:-$HOME/clawd/workspace}"
 DOMAIN="${1:?Usage: health-images.sh <domain> [--pages 10]}"
 PAGES="${3:-10}"
 
@@ -84,5 +85,5 @@ echo "  Wrong format (should be WebP/AVIF): $WRONG_FORMAT"
 echo "  Missing lazy loading: $MISSING_LAZY"
 
 # Save snapshot
-mkdir -p workspace/seo/health 2>/dev/null || true
-echo "{\"date\":\"$(date +%Y-%m-%d)\",\"domain\":\"${DOMAIN}\",\"total\":${TOTAL_IMAGES},\"missing_alt\":${MISSING_ALT},\"missing_dimensions\":${MISSING_DIMENSIONS},\"wrong_format\":${WRONG_FORMAT},\"missing_lazy\":${MISSING_LAZY}}" > "workspace/seo/health/images-$(date +%Y-%m-%d).json" 2>/dev/null || true
+mkdir -p "$WORKSPACE_ROOT/seo/health" 2>/dev/null || true
+echo "{\"date\":\"$(date +%Y-%m-%d)\",\"domain\":\"${DOMAIN}\",\"total\":${TOTAL_IMAGES},\"missing_alt\":${MISSING_ALT},\"missing_dimensions\":${MISSING_DIMENSIONS},\"wrong_format\":${WRONG_FORMAT},\"missing_lazy\":${MISSING_LAZY}}" > "$WORKSPACE_ROOT/seo/health/images-$(date +%Y-%m-%d).json" 2>/dev/null || true
