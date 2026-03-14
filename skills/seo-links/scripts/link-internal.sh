@@ -61,8 +61,8 @@ while to_visit and len(discovered_urls) < max_pages:
         for link in links:
             href = link.attrib.get('href', '')
 
-            # Skip non-http links
-            if href.startswith(('#', 'javascript:', 'mailto:', 'tel:')):
+            # Skip non-http links and CDN paths
+            if href.startswith(('#', 'javascript:', 'mailto:', 'tel:', '/cdn-cgi')):
                 continue
 
             # Convert relative to absolute
@@ -71,6 +71,10 @@ while to_visit and len(discovered_urls) < max_pages:
             elif href.startswith('http'):
                 full_url = href
             else:
+                continue
+
+            # Skip CDN paths in absolute URLs
+            if '/cdn-cgi' in full_url:
                 continue
 
             # Only add same-domain links
@@ -160,12 +164,15 @@ PYSCRIPT
       continue
     fi
 
-    # Extract all href links
-    LINKS=$(echo "$PAGE_HTML" | grep -oP 'href=["'\'']\K[^"'\'']+' | grep -v '^#' | grep -v '^javascript:' | grep -v '^mailto:' | grep -v '^tel:' || true)
+    # Extract all href links (exclude CDN paths)
+    LINKS=$(echo "$PAGE_HTML" | grep -oP 'href=["'\'']\K[^"'\'']+' | grep -v '^#' | grep -v '^javascript:' | grep -v '^mailto:' | grep -v '^tel:' | grep -v '^/cdn-cgi' || true)
 
     # Process each link
     while IFS= read -r LINK; do
       [[ -z "$LINK" ]] && continue
+
+      # Skip CDN paths
+      [[ "$LINK" =~ /cdn-cgi ]] && continue
 
       # Convert relative URLs to absolute
       if [[ "$LINK" =~ ^https?:// ]]; then
@@ -215,6 +222,8 @@ declare -A INBOUND_COUNT
 while IFS= read -r PAGE; do
   [[ -z "$PAGE" ]] && continue
   SLUG=$(echo "$PAGE" | sed "s|https://${DOMAIN}||")
+  # Skip CDN/system paths
+  [[ "$SLUG" =~ ^/cdn-cgi ]] && continue
   # Normalize empty slug (homepage) to "/"
   [[ -z "$SLUG" ]] && SLUG="/"
   INBOUND_COUNT["$SLUG"]=0
@@ -222,12 +231,15 @@ done <<< "$URLS"
 
 while IFS= read -r PAGE; do
   [[ -z "$PAGE" ]] && continue
-  BODY=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L --max-time 10 "$PAGE" 2>/dev/null)
-  INTERNAL_LINKS=$(echo "$BODY" | grep -oP "href=\"\K[^\"]*" | grep -E "^/|^https://${DOMAIN}" | sed "s|https://${DOMAIN}||" | sort -u)
-
   SLUG=$(echo "$PAGE" | sed "s|https://${DOMAIN}||")
+  # Skip CDN/system paths
+  [[ "$SLUG" =~ ^/cdn-cgi ]] && continue
   # Normalize empty slug (homepage) to "/"
   [[ -z "$SLUG" ]] && SLUG="/"
+
+  BODY=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L --max-time 10 "$PAGE" 2>/dev/null)
+  INTERNAL_LINKS=$(echo "$BODY" | grep -oP "href=\"\K[^\"]*" | grep -E "^/|^https://${DOMAIN}" | sed "s|https://${DOMAIN}||" | grep -v "^/cdn-cgi" | sort -u)
+
   LINK_COUNT=$(echo "$INTERNAL_LINKS" | grep -c . || true)
   
   echo "📄 ${SLUG} → ${LINK_COUNT} outbound internal links"
