@@ -10,6 +10,14 @@ MESSAGE="${3:-}"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
+# Load environment variables from .env
+if [[ -f "$REPO_ROOT/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$REPO_ROOT/.env"
+  set +a
+fi
+
 # Configuration (set these in .env or here)
 SLACK_WEBHOOK_URL="${SLACK_WEBHOOK_URL:-}"
 EMAIL_TO="${EMAIL_TO:-}"
