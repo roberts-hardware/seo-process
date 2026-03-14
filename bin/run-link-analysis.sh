@@ -40,17 +40,11 @@ echo ""
 
 # 2. Internal link opportunities
 echo "🔗 Step 2/2: Finding internal link opportunities..."
-LINK_OUTPUT=$("$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" skills/seo-links/scripts/link-internal.sh "$SITE_URL" 2>&1) || LINK_EXIT=$?
-
-if [[ ${LINK_EXIT:-0} -eq 0 ]]; then
-  echo "$LINK_OUTPUT"
+if "$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" skills/seo-links/scripts/link-internal.sh "$SITE_URL"; then
   echo "✅ Internal link analysis complete"
-elif echo "$LINK_OUTPUT" | grep -q "Could not fetch sitemap"; then
-  echo "⚠️  Internal link analysis skipped (no sitemap found)"
-  echo "   Add sitemap.xml to $SITE_URL for internal link analysis"
 else
-  echo "$LINK_OUTPUT"
   echo "⚠️  Internal link analysis failed"
+  echo "   Note: Sites without sitemaps require FIRECRAWL_API_KEY for crawling"
 fi
 echo ""
 

@@ -21,8 +21,65 @@ if [[ -z "$URLS" ]]; then
 fi
 
 if [[ -z "$URLS" ]]; then
-  echo "Could not fetch sitemap. Provide URL manually with --sitemap"
-  exit 1
+  echo "No sitemap found. Attempting to crawl site with Firecrawl..."
+
+  # Check for Firecrawl API key
+  if [[ -z "${FIRECRAWL_API_KEY:-}" ]]; then
+    echo "⚠️  FIRECRAWL_API_KEY not set. Cannot crawl site."
+    echo "   Set FIRECRAWL_API_KEY in .env or add sitemap.xml to site"
+    exit 1
+  fi
+
+  # Use Firecrawl to crawl the site
+  CRAWL_RESPONSE=$(curl -s -X POST "https://api.firecrawl.dev/v0/crawl" \
+    -H "Authorization: Bearer ${FIRECRAWL_API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"url\": \"https://${DOMAIN}\",
+      \"crawlerOptions\": {
+        \"maxDepth\": 2,
+        \"limit\": 50
+      },
+      \"pageOptions\": {
+        \"onlyMainContent\": false
+      }
+    }")
+
+  # Extract job ID
+  JOB_ID=$(echo "$CRAWL_RESPONSE" | grep -oP '"jobId":"\K[^"]+' || true)
+
+  if [[ -z "$JOB_ID" ]]; then
+    echo "❌ Failed to start crawl. Response:"
+    echo "$CRAWL_RESPONSE"
+    exit 1
+  fi
+
+  echo "Crawl started (Job ID: $JOB_ID). Waiting for completion..."
+
+  # Poll for completion (max 2 minutes)
+  for i in {1..24}; do
+    sleep 5
+    STATUS_RESPONSE=$(curl -s "https://api.firecrawl.dev/v0/crawl/status/${JOB_ID}" \
+      -H "Authorization: Bearer ${FIRECRAWL_API_KEY}")
+
+    STATUS=$(echo "$STATUS_RESPONSE" | grep -oP '"status":"\K[^"]+' || true)
+
+    if [[ "$STATUS" == "completed" ]]; then
+      echo "✅ Crawl completed"
+      URLS=$(echo "$STATUS_RESPONSE" | grep -oP '"sourceURL":"\K[^"]+')
+      break
+    elif [[ "$STATUS" == "failed" ]]; then
+      echo "❌ Crawl failed"
+      exit 1
+    fi
+
+    echo "Crawling... ($i/24)"
+  done
+
+  if [[ -z "$URLS" ]]; then
+    echo "❌ Crawl timeout or no URLs found"
+    exit 1
+  fi
 fi
 
 URL_COUNT=$(echo "$URLS" | wc -l)
