@@ -6,10 +6,12 @@
 #   monday-morning    - Discovery + monitoring for all clients
 #   friday-afternoon  - Health checks for all clients
 #   weekly-compete    - Competitor analysis for all clients
+#   content-weekly    - Generate briefs and create content (2 pieces per client)
 #
 # Example cron:
 #   0 9 * * 1 ~/seo-process/bin/schedule-all-clients.sh monday-morning
 #   0 15 * * 5 ~/seo-process/bin/schedule-all-clients.sh friday-afternoon
+#   0 10 * * 2 ~/seo-process/bin/schedule-all-clients.sh content-weekly
 
 set -euo pipefail
 
@@ -168,6 +170,36 @@ case "$SCHEDULE_NAME" in
     done <<< "$CLIENTS"
     ;;
 
+  content-weekly)
+    echo "📝 Running: Content pipeline for all clients (2 pieces each)"
+    echo ""
+
+    while IFS= read -r CLIENT_ID; do
+      [[ -z "$CLIENT_ID" ]] && continue
+
+      echo "─────────────────────────────────────────────────"
+      echo "🎯 Client: $CLIENT_ID"
+      echo "─────────────────────────────────────────────────"
+
+      # Content pipeline (briefs + research + create)
+      if "$REPO_ROOT/bin/run-content-pipeline.sh" "$CLIENT_ID"; then
+        # Sync to GitHub
+        "$REPO_ROOT/bin/sync-workspace.sh" "$CLIENT_ID" "Weekly content for $CLIENT_ID"
+        echo "✅ Content pipeline complete"
+        ((SUCCESS++))
+      else
+        echo "❌ Content pipeline failed"
+        ((FAILED++))
+      fi
+
+      echo ""
+
+      # Rate limiting
+      sleep 60  # Longer wait for content generation
+
+    done <<< "$CLIENTS"
+    ;;
+
   *)
     echo "❌ Error: Unknown schedule: $SCHEDULE_NAME"
     echo ""
@@ -175,6 +207,7 @@ case "$SCHEDULE_NAME" in
     echo "  monday-morning    - Discovery + monitoring"
     echo "  friday-afternoon  - Health checks"
     echo "  weekly-compete    - Competitor analysis"
+    echo "  content-weekly    - Content pipeline (2 pieces/client)"
     exit 1
     ;;
 esac
