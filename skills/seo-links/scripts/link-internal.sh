@@ -89,20 +89,26 @@ for url in discovered_urls:
     print(url)
 PYSCRIPT
 
-    # Run Scrapling crawler
-    SCRAPLING_OUTPUT=$("$SCRAPLING_PATH" "$TEMP_SCRIPT" "$DOMAIN" 50 2>&1)
-    SCRAPLING_EXIT=$?
+    # Run Scrapling crawler (capture errors properly despite set -e)
+    SCRAPLING_OUTPUT=$("$SCRAPLING_PATH" "$TEMP_SCRIPT" "$DOMAIN" 50 2>&1) || SCRAPLING_EXIT=$?
+    SCRAPLING_EXIT=${SCRAPLING_EXIT:-0}
 
     if [[ $SCRAPLING_EXIT -eq 0 ]]; then
-      URLS=$(echo "$SCRAPLING_OUTPUT" | grep "^https://")
+      URLS=$(echo "$SCRAPLING_OUTPUT" | grep "^https://" || true)
       if [[ -n "$URLS" ]]; then
         URL_COUNT=$(echo "$URLS" | wc -l)
         echo "✅ Scrapling discovered $URL_COUNT pages"
+      else
+        echo "⚠️  Scrapling ran but found no URLs"
+        echo "Output:"
+        echo "$SCRAPLING_OUTPUT"
+        echo ""
+        echo "Falling back to bash crawler..."
       fi
     else
       echo "⚠️  Scrapling failed with exit code $SCRAPLING_EXIT"
       echo "Error output:"
-      echo "$SCRAPLING_OUTPUT" | head -10
+      echo "$SCRAPLING_OUTPUT"
       echo ""
       echo "Falling back to bash crawler..."
     fi
