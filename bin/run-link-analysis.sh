@@ -44,7 +44,7 @@ if "$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" skills/seo-links/scripts/link
   echo "✅ Internal link analysis complete"
 else
   echo "⚠️  Internal link analysis failed"
-  echo "   Note: Sites without sitemaps require FIRECRAWL_API_KEY for crawling"
+  echo "   Note: Sites without sitemaps require Cloudflare API credentials"
 fi
 echo ""
 

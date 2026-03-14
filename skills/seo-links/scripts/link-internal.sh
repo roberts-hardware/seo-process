@@ -21,65 +21,46 @@ if [[ -z "$URLS" ]]; then
 fi
 
 if [[ -z "$URLS" ]]; then
-  echo "No sitemap found. Attempting to crawl site with Firecrawl..."
+  echo "No sitemap found. Attempting to crawl site with Cloudflare..."
 
-  # Check for Firecrawl API key
-  if [[ -z "${FIRECRAWL_API_KEY:-}" ]]; then
-    echo "⚠️  FIRECRAWL_API_KEY not set. Cannot crawl site."
-    echo "   Set FIRECRAWL_API_KEY in .env or add sitemap.xml to site"
+  # Check for Cloudflare API credentials
+  if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]] || [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+    echo "⚠️  CLOUDFLARE_ACCOUNT_ID or CLOUDFLARE_API_TOKEN not set."
+    echo "   Set these in .env or add sitemap.xml to site"
     exit 1
   fi
 
-  # Use Firecrawl to crawl the site
-  CRAWL_RESPONSE=$(curl -s -X POST "https://api.firecrawl.dev/v0/crawl" \
-    -H "Authorization: Bearer ${FIRECRAWL_API_KEY}" \
+  # Use Cloudflare Browser Rendering API to crawl the site
+  CRAWL_RESPONSE=$(curl -s -X POST \
+    "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/browser/crawl" \
+    -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
     -H "Content-Type: application/json" \
     -d "{
       \"url\": \"https://${DOMAIN}\",
-      \"crawlerOptions\": {
-        \"maxDepth\": 2,
-        \"limit\": 50
-      },
-      \"pageOptions\": {
-        \"onlyMainContent\": false
-      }
+      \"maxDepth\": 2,
+      \"maxPages\": 50,
+      \"waitUntil\": \"networkidle\"
     }")
 
-  # Extract job ID
-  JOB_ID=$(echo "$CRAWL_RESPONSE" | grep -oP '"jobId":"\K[^"]+' || true)
+  # Check for errors
+  SUCCESS=$(echo "$CRAWL_RESPONSE" | grep -oP '"success":\K(true|false)' || echo "false")
 
-  if [[ -z "$JOB_ID" ]]; then
-    echo "❌ Failed to start crawl. Response:"
-    echo "$CRAWL_RESPONSE"
+  if [[ "$SUCCESS" != "true" ]]; then
+    echo "❌ Failed to crawl site. Response:"
+    echo "$CRAWL_RESPONSE" | head -20
     exit 1
   fi
 
-  echo "Crawl started (Job ID: $JOB_ID). Waiting for completion..."
-
-  # Poll for completion (max 2 minutes)
-  for i in {1..24}; do
-    sleep 5
-    STATUS_RESPONSE=$(curl -s "https://api.firecrawl.dev/v0/crawl/status/${JOB_ID}" \
-      -H "Authorization: Bearer ${FIRECRAWL_API_KEY}")
-
-    STATUS=$(echo "$STATUS_RESPONSE" | grep -oP '"status":"\K[^"]+' || true)
-
-    if [[ "$STATUS" == "completed" ]]; then
-      echo "✅ Crawl completed"
-      URLS=$(echo "$STATUS_RESPONSE" | grep -oP '"sourceURL":"\K[^"]+')
-      break
-    elif [[ "$STATUS" == "failed" ]]; then
-      echo "❌ Crawl failed"
-      exit 1
-    fi
-
-    echo "Crawling... ($i/24)"
-  done
+  # Extract URLs from crawl results
+  URLS=$(echo "$CRAWL_RESPONSE" | grep -oP '"url":"\K[^"]+' | grep "^https://${DOMAIN}" | sort -u)
 
   if [[ -z "$URLS" ]]; then
-    echo "❌ Crawl timeout or no URLs found"
+    echo "❌ No URLs found in crawl results"
     exit 1
   fi
+
+  URL_COUNT=$(echo "$URLS" | wc -l)
+  echo "✅ Crawled $URL_COUNT pages"
 fi
 
 URL_COUNT=$(echo "$URLS" | wc -l)
