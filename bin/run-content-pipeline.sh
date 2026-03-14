@@ -73,7 +73,7 @@ for BRIEF in "${BRIEFS[@]}"; do
   echo ""
 
   # Research
-  echo "🔍 Step 2/3: Running keyword research..."
+  echo "🔍 Step 2/4: Running keyword research..."
   RESEARCH_FILE="$RESEARCH_DIR/${BRIEF_NAME}-research.json"
 
   if "$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" \
@@ -81,19 +81,38 @@ for BRIEF in "${BRIEFS[@]}"; do
       "$TARGET_KEYWORD" \
       --location "$LOCATION_CODE" \
       --json > "$RESEARCH_FILE" 2>&1; then
-    echo "✅ Research complete: $RESEARCH_FILE"
+    echo "✅ Research complete"
   else
-    echo "⚠️  Research failed, continuing anyway"
+    echo "⚠️  Research failed, skipping this brief"
+    continue
   fi
   echo ""
 
-  # Content creation placeholder
-  echo "✍️  Step 3/3: Content creation..."
-  echo "⚠️  Automated content creation not yet implemented"
-  echo "   Brief: $BRIEF"
-  echo "   Research: $RESEARCH_FILE"
-  echo "   Next: Use these files to create content manually or with AI"
+  # Content creation
+  echo "✍️  Step 3/4: Creating content with AI..."
+  if "$REPO_ROOT/bin/create-content.sh" "$CLIENT_ID" "$BRIEF" "$RESEARCH_FILE"; then
+    echo "✅ Content created"
+    ARTICLE_FILE="$REPO_ROOT/workspace/$CLIENT_ID/content/articles/${BRIEF_NAME}.md"
+  else
+    echo "❌ Content creation failed, skipping quality check"
+    continue
+  fi
   echo ""
+
+  # Quality check
+  echo "🔍 Step 4/4: Quality check..."
+  if "$REPO_ROOT/bin/check-content-quality.sh" "$ARTICLE_FILE" "$BRIEF"; then
+    echo "✅ Quality check passed"
+  else
+    echo "⚠️  Quality issues detected - review required"
+  fi
+  echo ""
+
+  # Rate limiting between pieces
+  if [[ $COUNT -lt $CONTENT_LIMIT ]]; then
+    echo "⏳ Waiting 30s before next piece..."
+    sleep 30
+  fi
 done
 
 echo "╔════════════════════════════════════════════════════════════"
