@@ -26,7 +26,11 @@ if [[ -z "$SITE_URL" ]]; then
   exit 1
 fi
 
+# Extract domain from site URL (remove protocol and trailing slash)
+DOMAIN=$(echo "$SITE_URL" | sed -e 's|https\?://||' -e 's|/$||' -e 's|www\.||')
+
 echo "🌐 Site: $SITE_URL"
+echo "🌐 Domain: $DOMAIN"
 echo ""
 
 # 1. Broken link check
@@ -40,7 +44,7 @@ echo ""
 
 # 2. Internal link opportunities
 echo "🔗 Step 2/2: Finding internal link opportunities..."
-if "$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" skills/seo-links/scripts/link-internal.sh "$SITE_URL"; then
+if "$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" skills/seo-links/scripts/link-internal.sh "$DOMAIN"; then
   echo "✅ Internal link analysis complete"
 else
   echo "⚠️  Internal link analysis failed"
