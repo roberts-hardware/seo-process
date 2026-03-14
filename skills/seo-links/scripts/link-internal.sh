@@ -90,13 +90,24 @@ for url in discovered_urls:
 PYSCRIPT
 
     # Run Scrapling crawler
-    URLS=$("$SCRAPLING_PATH" "$TEMP_SCRIPT" "$DOMAIN" 50 2>&1 | grep "^https://")
-    rm -f "$TEMP_SCRIPT"
+    SCRAPLING_OUTPUT=$("$SCRAPLING_PATH" "$TEMP_SCRIPT" "$DOMAIN" 50 2>&1)
+    SCRAPLING_EXIT=$?
 
-    if [[ -n "$URLS" ]]; then
-      URL_COUNT=$(echo "$URLS" | wc -l)
-      echo "✅ Scrapling discovered $URL_COUNT pages"
+    if [[ $SCRAPLING_EXIT -eq 0 ]]; then
+      URLS=$(echo "$SCRAPLING_OUTPUT" | grep "^https://")
+      if [[ -n "$URLS" ]]; then
+        URL_COUNT=$(echo "$URLS" | wc -l)
+        echo "✅ Scrapling discovered $URL_COUNT pages"
+      fi
+    else
+      echo "⚠️  Scrapling failed with exit code $SCRAPLING_EXIT"
+      echo "Error output:"
+      echo "$SCRAPLING_OUTPUT" | head -10
+      echo ""
+      echo "Falling back to bash crawler..."
     fi
+
+    rm -f "$TEMP_SCRIPT"
   fi
 
   # Fallback to simple bash-based crawler if Scrapling failed or not available
