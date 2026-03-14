@@ -2,7 +2,7 @@
 # Client: clara_dermatology
 
 client_id: clara_dermatology
-site: "sc-domain:https://claradermatology.com"
+site: "sc-domain:claradermatology.com"
 site_url: "https://claradermatology.com/"
 business_type: "Dermatology Clinic (Medical & Cosmetic)"
 

@@ -2,7 +2,7 @@
 # Client: lees_fresh_market
 
 client_id: lees_fresh_market
-site: "sc-domain:https://leesfreshmarketnc.com"
+site: "sc-domain:leesfreshmarketnc.com"
 site_url: "https://leesfreshmarketnc.com/"
 business_type: "Butcher Shop"
 

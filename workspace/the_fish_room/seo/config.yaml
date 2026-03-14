@@ -2,7 +2,7 @@
 # Client: the_fish_room
 
 client_id: the_fish_room
-site: "sc-domain:https://thefishroom.net"
+site: "sc-domain:thefishroom.net"
 site_url: "https://www.thefishroom.net/"
 business_type: "Aquarium Store"
 

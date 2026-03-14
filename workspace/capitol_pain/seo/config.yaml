@@ -2,7 +2,7 @@
 # Client: capitol_pain
 
 client_id: capitol_pain
-site: "sc-domain:https://capitolpain.com"
+site: "sc-domain:capitolpain.com"
 site_url: "https://capitolpain.com/"
 business_type: "Pain Management Clinic"
 

@@ -2,7 +2,7 @@
 # Client: top_shelf_golf_nc
 
 client_id: top_shelf_golf_nc
-site: "sc-domain:https://topshelfgolfnc.com"
+site: "sc-domain:topshelfgolfnc.com"
 site_url: "https://topshelfgolfnc.com/"
 business_type: "Golf Club Fitting & Golf Performance Services"
 

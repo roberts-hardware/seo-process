@@ -2,7 +2,7 @@
 # Client: clearwater_aquariums
 
 client_id: clearwater_aquariums
-site: "sc-domain:https://clearwaternc.com"
+site: "sc-domain:clearwaternc.com"
 site_url: "https://www.clearwaternc.com/"
 business_type: "Aquarium Design & Maintenance"
 

@@ -2,7 +2,7 @@
 # Client: road_home_rescue
 
 client_id: road_home_rescue
-site: "sc-domain:https://roadhomerescue.com"
+site: "sc-domain:roadhomerescue.com"
 site_url: "https://roadhomerescue.com/"
 business_type: "Dog Rescue / Animal Rescue Organization"
 

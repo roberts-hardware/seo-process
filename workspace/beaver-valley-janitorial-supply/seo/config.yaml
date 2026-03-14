@@ -2,7 +2,7 @@
 # Client: beaver-valley-janitorial-supply
 
 client_id: beaver-valley-janitorial-supply
-site: "sc-domain:https://bvjanitorial.com"
+site: "sc-domain:bvjanitorial.com"
 site_url: "https://bvjanitorial.com/"
 business_type: "Cleaning Supplies"
 

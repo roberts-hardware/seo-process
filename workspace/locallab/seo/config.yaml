@@ -2,7 +2,7 @@
 # Client: locallab
 
 client_id: locallab
-site: "sc-domain:https://locallab.io"
+site: "sc-domain:locallab.io"
 site_url: "https://locallab.io/"
 business_type: "Reputation Management & Review Automation Software"
 
