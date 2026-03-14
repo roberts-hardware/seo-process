@@ -70,9 +70,17 @@ if [[ -z "$URLS" ]]; then
   SUCCESS=$(echo "$CRAWL_RESPONSE" | grep -oP '"success":\K(true|false)' || echo "false")
 
   if [[ "$SUCCESS" != "true" ]]; then
-    echo "❌ Failed to crawl site. Response:"
-    echo "$CRAWL_RESPONSE" | head -20
-    exit 1
+    echo "⚠️  Cloudflare crawl failed. Response:"
+    echo "$CRAWL_RESPONSE" | head -5
+    echo ""
+    echo "Possible reasons:"
+    echo "  1. Browser Rendering API not enabled on your Cloudflare account"
+    echo "  2. Feature not available on your plan tier"
+    echo "  3. Endpoint not yet available in your region"
+    echo ""
+    echo "Recommendation: Add sitemap.xml to $DOMAIN for internal link analysis"
+    echo "Skipping internal link analysis for this site."
+    exit 0
   fi
 
   # Extract URLs from crawl results
