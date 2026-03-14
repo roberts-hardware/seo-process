@@ -11,3 +11,7 @@
 # OS files
 .DS_Store
 **/.DS_Store
+application_default_credentials.json
+credentials/
+logs/*.log
+pipeline-output.txt
