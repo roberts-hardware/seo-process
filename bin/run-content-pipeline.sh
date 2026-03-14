@@ -9,6 +9,14 @@ CLIENT_ID="${1:?Usage: run-content-pipeline.sh <client-id>}"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CONTENT_LIMIT=2
 
+# Load environment variables from .env
+if [[ -f "$REPO_ROOT/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$REPO_ROOT/.env"
+  set +a
+fi
+
 echo "╔════════════════════════════════════════════════════════════"
 echo "║ Content Pipeline: $CLIENT_ID"
 echo "║ Limit: $CONTENT_LIMIT pieces"
