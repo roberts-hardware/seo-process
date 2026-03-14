@@ -50,10 +50,10 @@ while IFS= read -r CLIENT_ID; do
 
   if "$REPO_ROOT/bin/run-link-analysis.sh" "$CLIENT_ID"; then
     echo "✅ Link analysis complete for $CLIENT_ID"
-    ((SUCCESS++))
+    SUCCESS=$((SUCCESS + 1))
   else
     echo "❌ Link analysis failed for $CLIENT_ID"
-    ((FAILED++))
+    FAILED=$((FAILED + 1))
   fi
 
   echo ""
