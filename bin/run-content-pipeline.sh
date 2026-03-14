@@ -25,14 +25,18 @@ else
 fi
 echo ""
 
-# 2. Count briefs and select top 2
+# 2. Get config to extract location code
+CONFIG="$REPO_ROOT/workspace/$CLIENT_ID/seo/config.yaml"
+LOCATION_CODE=$(grep "^location_code:" "$CONFIG" | awk '{print $2}' || echo "2840")
+
+# 3. Count briefs and select top 2
 BRIEF_DIR="$REPO_ROOT/workspace/$CLIENT_ID/content/briefs"
 if [[ ! -d "$BRIEF_DIR" ]]; then
   echo "⚠️  No briefs directory found"
   exit 0
 fi
 
-BRIEFS=($(ls -1 "$BRIEF_DIR"/*.md 2>/dev/null | head -n "$CONTENT_LIMIT" || true))
+BRIEFS=($(ls -1t "$BRIEF_DIR"/*.md 2>/dev/null | head -n "$CONTENT_LIMIT" || true))
 
 if [[ ${#BRIEFS[@]} -eq 0 ]]; then
   echo "⚠️  No briefs to process"
@@ -42,7 +46,11 @@ fi
 echo "📝 Found ${#BRIEFS[@]} briefs to process (limit: $CONTENT_LIMIT)"
 echo ""
 
-# 3. For each brief, run research and create content
+# 4. Create research directory
+RESEARCH_DIR="$REPO_ROOT/workspace/$CLIENT_ID/content/research"
+mkdir -p "$RESEARCH_DIR"
+
+# 5. For each brief, run research
 COUNT=0
 for BRIEF in "${BRIEFS[@]}"; do
   ((COUNT++))
@@ -53,33 +61,38 @@ for BRIEF in "${BRIEFS[@]}"; do
   echo "─────────────────────────────────────────────────────────"
   echo ""
 
+  # Extract target keyword from brief (first H1 or filename)
+  TARGET_KEYWORD=$(grep "^# " "$BRIEF" | head -1 | sed 's/^# //' || echo "$BRIEF_NAME" | tr '-' ' ')
+
+  if [[ -z "$TARGET_KEYWORD" ]]; then
+    echo "⚠️  Could not extract keyword from brief, skipping"
+    continue
+  fi
+
+  echo "🎯 Target keyword: $TARGET_KEYWORD"
+  echo ""
+
   # Research
-  echo "🔍 Step 2/4: Running research..."
-  # TODO: Add research script when available
-  # if "$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" skills/seo-forge/scripts/seo-research.sh "$BRIEF"; then
-  #   echo "✅ Research complete"
-  # else
-  #   echo "⚠️  Research failed, continuing anyway"
-  # fi
-  echo "⚠️  Research script not yet integrated - skipping"
+  echo "🔍 Step 2/3: Running keyword research..."
+  RESEARCH_FILE="$RESEARCH_DIR/${BRIEF_NAME}-research.json"
+
+  if "$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" \
+      skills/seo-forge/scripts/seo-research.sh \
+      "$TARGET_KEYWORD" \
+      --location "$LOCATION_CODE" \
+      --json > "$RESEARCH_FILE" 2>&1; then
+    echo "✅ Research complete: $RESEARCH_FILE"
+  else
+    echo "⚠️  Research failed, continuing anyway"
+  fi
   echo ""
 
-  # Create content
-  echo "✍️  Step 3/4: Creating content..."
-  # TODO: Add content creation script
-  # This would use the brief + research to generate the article
-  echo "⚠️  Content creation not yet integrated - skipping"
-  echo ""
-
-  # Quality check
-  echo "✅ Step 4/4: Quality check..."
-  # TODO: Add quality check script when available
-  # if "$REPO_ROOT/bin/run-for-client.sh" "$CLIENT_ID" skills/seo-forge/scripts/seo-check.sh "$ARTICLE"; then
-  #   echo "✅ Quality check passed"
-  # else
-  #   echo "⚠️  Quality issues detected"
-  # fi
-  echo "⚠️  Quality check not yet integrated - skipping"
+  # Content creation placeholder
+  echo "✍️  Step 3/3: Content creation..."
+  echo "⚠️  Automated content creation not yet implemented"
+  echo "   Brief: $BRIEF"
+  echo "   Research: $RESEARCH_FILE"
+  echo "   Next: Use these files to create content manually or with AI"
   echo ""
 done
 
